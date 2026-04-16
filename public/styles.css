@@ -1,6 +1,9 @@
 :root {
   --font-display: ui-rounded, "SF Pro Rounded", "SF Pro Display", "Avenir Next", "PingFang SC", "Hiragino Sans GB", sans-serif;
   --font-body: ui-rounded, "SF Pro Text", "PingFang SC", "Hiragino Sans GB", "Helvetica Neue", sans-serif;
+  --tracking-tight: -0.035em;
+  --tracking-base: 0.008em;
+  --tracking-relaxed: 0.016em;
   --bg: #f6f1ef;
   --bg-soft: #fbf7f4;
   --card: rgba(255, 255, 255, 0.92);
@@ -46,6 +49,7 @@ body {
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  letter-spacing: var(--tracking-base);
 }
 
 body[data-page="landing"],
@@ -178,6 +182,7 @@ svg {
 .card-head h3,
 .panel-header h3 {
   margin: 0;
+  letter-spacing: var(--tracking-tight);
 }
 
 .brand-block h1 {
@@ -197,6 +202,7 @@ svg {
   margin: 0;
   color: var(--text-soft);
   line-height: 1.65;
+  letter-spacing: 0.012em;
 }
 
 .nav-list {
@@ -214,6 +220,7 @@ svg {
   background: transparent;
   text-align: left;
   color: var(--text-soft);
+  letter-spacing: 0.01em;
   transition: transform 0.14s ease, border-color 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease;
 }
 
@@ -344,6 +351,13 @@ svg {
   text-align: left;
 }
 
+.session-copy strong,
+.button,
+.count-pill,
+.tag {
+  letter-spacing: 0.01em;
+}
+
 .session-avatar {
   width: 42px;
   height: 42px;
@@ -435,7 +449,7 @@ svg {
   max-width: 14ch;
   font-size: clamp(2rem, 4vw, 3.4rem);
   line-height: 1.06;
-  letter-spacing: -0.05em;
+  letter-spacing: -0.045em;
 }
 
 .hero-quote-sub {
@@ -494,6 +508,7 @@ svg {
   border: 1px solid transparent;
   border-radius: 999px;
   padding: 0.82rem 1.18rem;
+  font-weight: 600;
   transition: transform 0.1s ease, border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
 }
 
@@ -697,6 +712,7 @@ svg {
 .data-form span {
   color: var(--text-soft);
   font-size: 0.92rem;
+  letter-spacing: 0.012em;
 }
 
 .form-grid.two {
@@ -718,6 +734,7 @@ svg {
     linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 250, 246, 0.78)),
     linear-gradient(135deg, rgba(255, 232, 220, 0.22), rgba(255, 255, 255, 0.08));
   outline: none;
+  letter-spacing: 0.01em;
 }
 
 .data-form input:focus,
@@ -1207,6 +1224,7 @@ body.intro-actions-ready .hero-entry-grid {
 .identity-stage {
   display: grid;
   place-items: center;
+  min-height: 100vh;
   padding: calc(28px + env(safe-area-inset-top)) 18px calc(28px + env(safe-area-inset-bottom));
 }
 
@@ -1225,16 +1243,18 @@ body.intro-actions-ready .hero-entry-grid {
 
 .identity-brand {
   position: absolute;
-  top: 24px;
-  left: 24px;
+  top: 28px;
+  left: 50%;
   z-index: 2;
+  transform: translateX(-50%);
   color: rgba(255, 255, 255, 0.88);
 }
 
 .identity-card {
   position: relative;
   width: min(560px, 100%);
-  padding: 26px;
+  margin-inline: auto;
+  padding: 30px 30px 28px;
   border-radius: 34px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background:
@@ -1308,13 +1328,14 @@ body.intro-actions-ready .hero-entry-grid {
 .identity-copy h1 {
   margin: 0;
   font-size: clamp(2rem, 5vw, 3rem);
-  letter-spacing: -0.06em;
+  letter-spacing: -0.05em;
   color: #fff;
 }
 
 .identity-quote {
   margin: 10px 0 0;
   color: rgba(236, 239, 247, 0.66);
+  letter-spacing: 0.012em;
 }
 
 .landing-device-panel {
@@ -1455,6 +1476,7 @@ body.intro-actions-ready .hero-entry-grid {
   color: rgba(255, 255, 255, 0.62);
   font-size: 0.92rem;
   margin-bottom: 2px;
+  letter-spacing: 0.014em;
 }
 
 .choice-pill {
@@ -1467,6 +1489,7 @@ body.intro-actions-ready .hero-entry-grid {
   border: 1px solid rgba(255, 255, 255, 0.08);
   color: rgba(255, 249, 245, 0.92);
   cursor: pointer;
+  letter-spacing: 0.01em;
 }
 
 .choice-pill input {
@@ -2290,6 +2313,10 @@ body.update-gate-open {
   .span-two {
     grid-column: span 2;
   }
+
+  body[data-page="auth"] .identity-brand {
+    top: 20px;
+  }
 }
 
 @media (min-width: 821px) and (max-width: 1180px) {
@@ -2453,6 +2480,10 @@ body.update-gate-open {
     overflow: auto;
     border-radius: 28px;
   }
+
+  body[data-page="auth"] .identity-stage {
+    padding-top: calc(108px + env(safe-area-inset-top));
+  }
 }
 
 @media (max-width: 1120px) {
@@ -2586,8 +2617,9 @@ body.update-gate-open {
   }
 
   .identity-brand {
-    left: 18px;
+    left: 50%;
     top: 18px;
+    transform: translateX(-50%);
   }
 
   .device-card-head,
