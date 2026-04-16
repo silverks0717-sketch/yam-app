@@ -306,6 +306,12 @@ svg {
   align-items: center;
 }
 
+.hero-copy {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+}
+
 .panel {
   display: none;
   margin-top: 18px;
@@ -469,6 +475,10 @@ svg {
 
 .hero-actions {
   margin-top: 26px;
+}
+
+.topbar-mini-action {
+  white-space: nowrap;
 }
 
 .hero-side {
@@ -714,6 +724,10 @@ svg {
 .data-form {
   display: grid;
   gap: 14px;
+}
+
+.form-submit-row {
+  margin-top: 2px;
 }
 
 .data-form label {
@@ -1612,20 +1626,21 @@ body[data-page="app"][data-form-factor="tablet"][data-fold-state="expanded"] .re
 body[data-page="app"][data-form-factor="mobile"] .topbar-actions {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: max-content minmax(0, 1.4fr) auto auto;
   align-items: stretch;
+  gap: 8px;
 }
 
 body[data-page="app"][data-form-factor="mobile"] .sync-stack,
 body[data-page="app"][data-form-factor="mobile"] .session-chip {
-  grid-column: 1 / -1;
+  grid-column: auto;
 }
 
 body[data-page="app"][data-form-factor="mobile"] .topbar-actions .button,
 body[data-page="app"][data-form-factor="mobile"] .topbar-actions .sync-stack,
 body[data-page="app"][data-form-factor="mobile"] .topbar-actions .session-chip {
-  width: 100%;
-  justify-content: center;
+  width: auto;
+  justify-content: flex-start;
 }
 
 body[data-page="app"][data-form-factor="mobile"] .record-layout {
@@ -1653,31 +1668,32 @@ body[data-page="app"][data-form-factor="mobile"] .sidebar {
 }
 
 body[data-page="app"][data-form-factor="mobile"] .hero-card {
-  padding: 20px;
-  border-radius: 30px;
+  padding: 16px;
+  border-radius: 26px;
   box-shadow: 0 20px 40px rgba(140, 101, 91, 0.12);
+  gap: 14px;
 }
 
 body[data-page="app"][data-form-factor="mobile"] .hero-quote {
-  font-size: clamp(1.78rem, 8vw, 2.25rem);
-  line-height: 1.08;
+  font-size: clamp(1.6rem, 7vw, 2rem);
+  line-height: 1.06;
 }
 
 body[data-page="app"][data-form-factor="mobile"] .button {
-  padding: 0.76rem 1rem;
-  border-radius: 20px;
-  font-size: 0.94rem;
+  padding: 0.68rem 0.92rem;
+  border-radius: 18px;
+  font-size: 0.9rem;
 }
 
 body[data-page="app"][data-form-factor="mobile"] .data-form {
-  gap: 12px;
+  gap: 10px;
 }
 
 body[data-page="app"][data-form-factor="mobile"] .data-form input,
 body[data-page="app"][data-form-factor="mobile"] .data-form select,
 body[data-page="app"][data-form-factor="mobile"] .data-form textarea {
-  padding: 12px 13px;
-  border-radius: 18px;
+  padding: 11px 12px;
+  border-radius: 16px;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.84), rgba(255, 250, 246, 0.72)),
     linear-gradient(135deg, rgba(255, 235, 225, 0.18), rgba(255, 255, 255, 0.06));
@@ -1693,18 +1709,120 @@ body[data-page="app"][data-form-factor="mobile"] .segmented {
 }
 
 body[data-page="app"][data-form-factor="mobile"] .record-card {
-  padding: 15px;
-  border-radius: 20px;
+  padding: 13px;
+  border-radius: 18px;
 }
 
 body[data-page="app"][data-form-factor="mobile"] .session-chip-button {
   min-width: 0;
+  padding: 9px 10px;
+  border-radius: 18px;
 }
 
 body[data-page="app"][data-form-factor="mobile"] .session-avatar {
-  width: 38px;
-  height: 38px;
-  border-radius: 14px;
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+}
+
+body[data-page="app"][data-form-factor="mobile"] .session-copy {
+  min-width: 0;
+}
+
+body[data-page="app"][data-form-factor="mobile"] .session-copy strong {
+  font-size: 0.9rem;
+}
+
+body[data-page="app"][data-form-factor="mobile"] .session-copy .record-meta,
+body[data-page="app"][data-form-factor="mobile"] .sync-hint {
+  display: none;
+}
+
+body[data-page="app"][data-form-factor="mobile"] .sync-stack {
+  min-width: 0;
+  padding: 8px 10px;
+  border-radius: 18px;
+}
+
+body[data-page="app"][data-form-factor="mobile"] .sync-indicator {
+  padding: 0.24rem 0.54rem;
+  font-size: 0.76rem;
+}
+
+body[data-page="app"][data-form-factor="mobile"] .topbar-mini-action {
+  padding-inline: 0.82rem;
+  font-size: 0.84rem;
+}
+
+body[data-page="app"][data-form-factor="mobile"] .topbar {
+  padding: 14px 14px 12px;
+  gap: 12px;
+}
+
+body[data-page="app"][data-form-factor="mobile"] .topbar-copy-block {
+  gap: 2px;
+}
+
+body[data-page="app"][data-form-factor="mobile"] .topbar h2 {
+  font-size: 1.58rem;
+  line-height: 1.02;
+}
+
+body[data-page="app"][data-form-factor="mobile"] .topbar-copy {
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+body[data-page="app"][data-form-factor="mobile"] .hero-actions {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+body[data-page="app"][data-form-factor="mobile"] .hero-side {
+  display: none;
+}
+
+body[data-page="app"][data-form-factor="mobile"] .panel {
+  margin-top: 12px;
+}
+
+body[data-page="app"][data-form-factor="mobile"] .panel-header {
+  margin-bottom: 12px;
+}
+
+body[data-page="app"][data-form-factor="mobile"] .card,
+body[data-page="app"][data-form-factor="mobile"] .empty-panel {
+  padding: 16px;
+}
+
+body[data-page="app"][data-form-factor="mobile"] .segmented {
+  margin-bottom: 12px;
+  padding: 4px;
+}
+
+body[data-page="app"][data-form-factor="mobile"] .segmented-button {
+  padding: 0.5rem 0.78rem;
+}
+
+body[data-page="app"][data-form-factor="mobile"] .form-card {
+  position: static;
+}
+
+body[data-page="app"][data-form-factor="mobile"] .form-submit-row {
+  position: sticky;
+  bottom: calc(8px + env(safe-area-inset-bottom));
+  padding: 10px;
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(250, 244, 241, 0.94), rgba(255, 249, 245, 0.9));
+  box-shadow: 0 14px 28px rgba(115, 78, 69, 0.08);
+  backdrop-filter: blur(16px);
+  z-index: 2;
+}
+
+body[data-page="app"][data-form-factor="mobile"] .form-submit-row .button {
+  flex: 1 1 0;
 }
 
 body[data-page="admin"][data-form-factor="mobile"] .session-chip,
@@ -2413,8 +2531,8 @@ body[data-form-factor="mobile"] {
   }
 
   .app-shell {
-    width: min(100%, calc(100% - 18px));
-    margin: 10px auto 20px;
+    width: min(100%, calc(100% - 12px));
+    margin: 6px auto 16px;
   }
 
   .topbar,
@@ -2422,8 +2540,8 @@ body[data-form-factor="mobile"] {
   .sidebar,
   .hero-card,
   .empty-panel {
-    padding: 18px;
-    border-radius: 26px;
+    padding: 16px;
+    border-radius: 24px;
   }
 
   .topbar,
@@ -2467,14 +2585,14 @@ body[data-form-factor="mobile"] {
 
   .sidebar {
     position: fixed;
-    left: 12px;
-    right: 12px;
-    bottom: calc(12px + env(safe-area-inset-bottom));
+    left: 8px;
+    right: 8px;
+    bottom: calc(8px + env(safe-area-inset-bottom));
     top: auto;
     z-index: 20;
     min-height: auto;
-    padding: 10px;
-    border-radius: 28px;
+    padding: 8px;
+    border-radius: 24px;
     box-shadow: var(--shadow-xl);
   }
 
@@ -2575,8 +2693,8 @@ body[data-form-factor="mobile"] {
   .policy-shell,
   .auth-shell,
   .admin-shell {
-    width: min(100%, calc(100% - 16px));
-    margin: 10px auto 24px;
+    width: min(100%, calc(100% - 12px));
+    margin: 6px auto 20px;
   }
 
   .marketing-hero,

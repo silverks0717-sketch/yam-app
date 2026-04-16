@@ -157,13 +157,6 @@ function cacheElements() {
     formTitle: byId("body-form-title"),
     submit: byId("body-submit"),
     cancel: byId("body-cancel"),
-    count: byId("body-count"),
-    list: byId("body-list"),
-    selectToggle: byId("body-select-toggle"),
-    selectionBar: byId("body-selection-bar"),
-    selectionCount: byId("body-selection-count"),
-    selectAll: byId("body-select-all"),
-    deleteSelected: byId("body-delete-selected"),
   };
 
   elements.trends = {
@@ -214,11 +207,9 @@ function bindEvents() {
 
   elements.meal.list.addEventListener("click", handleMealListClick);
   elements.training.list.addEventListener("click", handleTrainingListClick);
-  elements.body.list.addEventListener("click", handleBodyListClick);
 
   bindSelectionControls("meals", elements.meal);
   bindSelectionControls("trainings", elements.training);
-  bindSelectionControls("bodyMetrics", elements.body);
   elements.logoutButton.addEventListener("click", handleLogout);
   elements.profile.openButton.addEventListener("click", openProfileSheet);
   elements.profile.closeButton.addEventListener("click", closeProfileSheet);
@@ -230,6 +221,10 @@ function bindEvents() {
 }
 
 function bindSelectionControls(key, group) {
+  if (!group.selectToggle || !group.selectAll || !group.deleteSelected) {
+    return;
+  }
+
   group.selectToggle.addEventListener("click", () => toggleSelectionMode(key));
   group.selectAll.addEventListener("click", () => toggleSelectAll(key));
   group.deleteSelected.addEventListener("click", () => deleteSelectedRecords(key));
@@ -427,7 +422,6 @@ function renderReview(model) {
 function renderRecordLists(records) {
   renderSelectionHeader("meals", elements.meal, records.meals.length);
   renderSelectionHeader("trainings", elements.training, records.trainings.length);
-  renderSelectionHeader("bodyMetrics", elements.body, records.bodyMetrics.length);
 
   elements.meal.list.innerHTML = records.meals.length
     ? records.meals.map((entry) => renderMealCard(entry)).join("")
@@ -436,13 +430,13 @@ function renderRecordLists(records) {
   elements.training.list.innerHTML = records.trainings.length
     ? records.trainings.map((entry) => renderTrainingCard(entry)).join("")
     : renderEmptyList("还没有训练记录，随便记一场也没关系。");
-
-  elements.body.list.innerHTML = records.bodyMetrics.length
-    ? records.bodyMetrics.map((entry) => renderBodyCard(entry)).join("")
-    : renderEmptyList("还没有身体记录，先从体重或腰围开始。");
 }
 
 function renderSelectionHeader(key, group, count) {
+  if (!group.count || !group.selectToggle || !group.selectionBar || !group.selectionCount) {
+    return;
+  }
+
   const selection = state.ui.selection[key];
   group.count.textContent = `${count} 条`;
   group.selectToggle.textContent = selection.active ? "结束选择" : "选择删除";
@@ -546,78 +540,93 @@ async function handleMealSubmit(event) {
   event.preventDefault();
 
   const form = event.currentTarget;
-  const payload = {
-    date: form.date.value,
-    time: form.time.value,
-    mealType: form.mealType.value,
-    foodName: form.foodName.value.trim(),
-    portion: form.portion.value.trim(),
-    highCalorie: form.highCalorie.checked,
-    social: form.social.checked,
-    note: form.note.value.trim(),
-  };
+  const finishSubmitting = setFormSubmitting(elements.meal.submit, state.ui.editing.mealId ? "确认更新" : "确认保存");
+  try {
+    const payload = {
+      date: form.date.value,
+      time: form.time.value,
+      mealType: form.mealType.value,
+      foodName: form.foodName.value.trim(),
+      portion: form.portion.value.trim(),
+      highCalorie: form.highCalorie.checked,
+      social: form.social.checked,
+      note: form.note.value.trim(),
+    };
 
-  if (!payload.foodName) {
-    showMessage("请先写食物名称", "error", true);
-    return;
+    if (!payload.foodName) {
+      showMessage("请先写食物名称", "error", true);
+      return;
+    }
+
+    upsertRecord("meals", payload, state.ui.editing.mealId);
+    await persistData(state.ui.editing.mealId ? "饮食记录已更新" : "饮食记录已保存");
+    resetMealForm();
+  } finally {
+    finishSubmitting();
   }
-
-  upsertRecord("meals", payload, state.ui.editing.mealId);
-  await persistData(state.ui.editing.mealId ? "饮食记录已更新" : "饮食记录已保存");
-  resetMealForm();
 }
 
 async function handleTrainingSubmit(event) {
   event.preventDefault();
 
   const form = event.currentTarget;
-  const payload = {
-    date: form.date.value,
-    time: form.time.value,
-    trainingName: form.trainingName.value.trim(),
-    duration: parseOptionalNumber(form.duration.value),
-    details: form.details.value.trim(),
-    weight: parseOptionalNumber(form.weight.value),
-    reps: parseOptionalNumber(form.reps.value),
-    sets: parseOptionalNumber(form.sets.value),
-    note: form.note.value.trim(),
-  };
+  const finishSubmitting = setFormSubmitting(elements.training.submit, state.ui.editing.trainingId ? "确认更新" : "确认保存");
+  try {
+    const payload = {
+      date: form.date.value,
+      time: form.time.value,
+      trainingName: form.trainingName.value.trim(),
+      duration: parseOptionalNumber(form.duration.value),
+      details: form.details.value.trim(),
+      weight: parseOptionalNumber(form.weight.value),
+      reps: parseOptionalNumber(form.reps.value),
+      sets: parseOptionalNumber(form.sets.value),
+      note: form.note.value.trim(),
+    };
 
-  if (!payload.trainingName) {
-    showMessage("请先写训练名称", "error", true);
-    return;
+    if (!payload.trainingName) {
+      showMessage("请先写训练名称", "error", true);
+      return;
+    }
+
+    upsertRecord("trainings", payload, state.ui.editing.trainingId);
+    await persistData(state.ui.editing.trainingId ? "训练记录已更新" : "训练记录已保存");
+    resetTrainingForm();
+  } finally {
+    finishSubmitting();
   }
-
-  upsertRecord("trainings", payload, state.ui.editing.trainingId);
-  await persistData(state.ui.editing.trainingId ? "训练记录已更新" : "训练记录已保存");
-  resetTrainingForm();
 }
 
 async function handleBodySubmit(event) {
   event.preventDefault();
 
   const form = event.currentTarget;
-  const payload = {
-    date: form.date.value,
-    weight: parseOptionalNumber(form.weight.value),
-    waist: parseOptionalNumber(form.waist.value),
-    bodyFat: parseOptionalNumber(form.bodyFat.value),
-    boneMuscle: parseOptionalNumber(form.boneMuscle.value),
-  };
+  const finishSubmitting = setFormSubmitting(elements.body.submit, state.ui.editing.bodyId ? "确认更新" : "确认保存");
+  try {
+    const payload = {
+      date: form.date.value,
+      weight: parseOptionalNumber(form.weight.value),
+      waist: parseOptionalNumber(form.waist.value),
+      bodyFat: parseOptionalNumber(form.bodyFat.value),
+      boneMuscle: parseOptionalNumber(form.boneMuscle.value),
+    };
 
-  if (
-    !isFiniteNumber(payload.weight) &&
-    !isFiniteNumber(payload.waist) &&
-    !isFiniteNumber(payload.bodyFat) &&
-    !isFiniteNumber(payload.boneMuscle)
-  ) {
-    showMessage("至少填一项身体数据", "error", true);
-    return;
+    if (
+      !isFiniteNumber(payload.weight) &&
+      !isFiniteNumber(payload.waist) &&
+      !isFiniteNumber(payload.bodyFat) &&
+      !isFiniteNumber(payload.boneMuscle)
+    ) {
+      showMessage("至少填一项身体数据", "error", true);
+      return;
+    }
+
+    upsertRecord("bodyMetrics", payload, state.ui.editing.bodyId);
+    await persistData(state.ui.editing.bodyId ? "身体记录已更新" : "身体记录已保存");
+    resetBodyForm();
+  } finally {
+    finishSubmitting();
   }
-
-  upsertRecord("bodyMetrics", payload, state.ui.editing.bodyId);
-  await persistData(state.ui.editing.bodyId ? "身体记录已更新" : "身体记录已保存");
-  resetBodyForm();
 }
 
 function upsertRecord(key, payload, editingId) {
@@ -641,10 +650,6 @@ function handleMealListClick(event) {
 
 function handleTrainingListClick(event) {
   handleListClick(event, "trainings", state.data.trainings, fillTrainingForm, "确定删除这条训练记录吗？", "训练记录已删除");
-}
-
-function handleBodyListClick(event) {
-  handleListClick(event, "bodyMetrics", state.data.bodyMetrics, fillBodyForm, "确定删除这条身体记录吗？", "身体记录已删除");
 }
 
 function handleListClick(event, key, collection, editHandler, question, successMessage) {
@@ -769,7 +774,7 @@ function fillMealForm(entry) {
 
   state.ui.editing.mealId = entry.id;
   elements.meal.formTitle.textContent = "编辑饮食记录";
-  elements.meal.submit.textContent = "更新饮食";
+  elements.meal.submit.textContent = "确认更新";
   focusCurrentRecordForm();
 }
 
@@ -791,7 +796,7 @@ function fillTrainingForm(entry) {
 
   state.ui.editing.trainingId = entry.id;
   elements.training.formTitle.textContent = "编辑训练记录";
-  elements.training.submit.textContent = "更新训练";
+  elements.training.submit.textContent = "确认更新";
   focusCurrentRecordForm();
 }
 
@@ -809,7 +814,7 @@ function fillBodyForm(entry) {
 
   state.ui.editing.bodyId = entry.id;
   elements.body.formTitle.textContent = "编辑身体记录";
-  elements.body.submit.textContent = "更新身体数据";
+  elements.body.submit.textContent = "确认更新";
   focusCurrentRecordForm();
 }
 
@@ -826,7 +831,7 @@ function resetMealForm() {
   elements.meal.form.mealType.value = "早餐";
   state.ui.editing.mealId = null;
   elements.meal.formTitle.textContent = "新增饮食记录";
-  elements.meal.submit.textContent = "保存饮食";
+  elements.meal.submit.textContent = "确认保存";
 }
 
 function resetTrainingForm() {
@@ -835,7 +840,7 @@ function resetTrainingForm() {
   elements.training.form.time.value = currentTimeString();
   state.ui.editing.trainingId = null;
   elements.training.formTitle.textContent = "新增训练记录";
-  elements.training.submit.textContent = "保存训练";
+  elements.training.submit.textContent = "确认保存";
 }
 
 function resetBodyForm() {
@@ -843,7 +848,7 @@ function resetBodyForm() {
   elements.body.form.date.value = todayString();
   state.ui.editing.bodyId = null;
   elements.body.formTitle.textContent = "新增身体记录";
-  elements.body.submit.textContent = "保存身体数据";
+  elements.body.submit.textContent = "确认保存";
 }
 
 function setActiveTab(tab) {
@@ -884,6 +889,17 @@ function showMessage(text, tone = "success", persist = false) {
       elements.statusBanner.textContent = "";
     }, 3200);
   }
+}
+
+function setFormSubmitting(button, idleLabel) {
+  const original = idleLabel || button.textContent;
+  button.disabled = true;
+  button.textContent = "保存中…";
+
+  return () => {
+    button.disabled = false;
+    button.textContent = original;
+  };
 }
 
 async function handleLogout() {

@@ -69,8 +69,8 @@
 		              </div>
 		            </button>
 	            <a id="admin-link" class="button ghost" href="/admin" hidden>总控后台</a>
-	            <button class="button subtle export-excel-button" type="button">导出 Excel</button>
-	            <button id="logout-button" class="button ghost" type="button">退出登录</button>
+	            <button class="button subtle export-excel-button topbar-mini-action" type="button">导出 Excel</button>
+	            <button id="logout-button" class="button ghost topbar-mini-action" type="button">退出登录</button>
           </div>
         </header>
 
@@ -214,8 +214,8 @@
                     <textarea name="note" rows="3" maxlength="160" placeholder="可选，留一点点就好"></textarea>
                   </label>
 
-                  <div class="button-row">
-                    <button id="meal-submit" class="button primary" type="submit">保存饮食</button>
+                  <div class="button-row form-submit-row">
+                    <button id="meal-submit" class="button primary" type="submit">确认保存</button>
                     <button id="meal-cancel" class="button ghost" type="button">取消编辑</button>
                   </div>
                 </form>
@@ -301,8 +301,8 @@
                     <textarea name="note" rows="3" maxlength="160" placeholder="例如：今天状态还行 / 时间有点赶"></textarea>
                   </label>
 
-                  <div class="button-row">
-                    <button id="training-submit" class="button primary" type="submit">保存训练</button>
+                  <div class="button-row form-submit-row">
+                    <button id="training-submit" class="button primary" type="submit">确认保存</button>
                     <button id="training-cancel" class="button ghost" type="button">取消编辑</button>
                   </div>
                 </form>
@@ -368,34 +368,11 @@
                     </label>
                   </div>
 
-                  <div class="button-row">
-                    <button id="body-submit" class="button primary" type="submit">保存身体数据</button>
+                  <div class="button-row form-submit-row">
+                    <button id="body-submit" class="button primary" type="submit">确认保存</button>
                     <button id="body-cancel" class="button ghost" type="button">取消编辑</button>
                   </div>
                 </form>
-              </article>
-
-              <article class="card list-card">
-                <div class="list-toolbar">
-                  <div>
-                    <h3>最近身体记录</h3>
-                    <span id="body-count" class="count-pill"></span>
-                  </div>
-
-                  <div class="list-toolbar-actions">
-                    <button id="body-select-toggle" class="button ghost" type="button">选择删除</button>
-                  </div>
-                </div>
-
-                <div id="body-selection-bar" class="selection-bar" hidden>
-                  <span id="body-selection-count">已选 0 条</span>
-                  <div class="selection-actions">
-                    <button id="body-select-all" class="button ghost" type="button">全选</button>
-                    <button id="body-delete-selected" class="button warn" type="button">批量删除</button>
-                  </div>
-                </div>
-
-                <div id="body-list" class="record-list"></div>
               </article>
             </div>
           </div>
