@@ -1,7 +1,11 @@
-const CACHE_NAME = "yam-shell-v3";
+const CACHE_NAME = "yam-shell-v5";
 const PRECACHE = [
   "/",
   "/auth",
+  "/auth/user-login",
+  "/auth/user-register",
+  "/auth/admin-login",
+  "/auth/admin-register",
   "/app",
   "/install",
   "/privacy",

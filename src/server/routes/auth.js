@@ -22,14 +22,14 @@ const userRegisterSchema = z.object({
   username: z.string().trim().min(3).max(40),
   email: z.string().trim().email().max(160).optional().or(z.literal("")),
   password: z.string().min(8).max(72),
-  gender: z.enum(USER_GENDERS),
+  gender: z.enum(USER_GENDERS).optional().default("FEMALE"),
 });
 
 const adminRegisterSchema = z.object({
   username: z.string().trim().min(3).max(40),
   email: z.string().trim().email().max(160).optional().or(z.literal("")),
   password: z.string().min(8).max(72),
-  gender: z.enum(USER_GENDERS),
+  gender: z.enum(USER_GENDERS).optional().default("FEMALE"),
   adminKey: z.string().trim().length(8),
 });
 
@@ -45,6 +45,12 @@ const adminLoginSchema = z.object({
 
 const refreshSchema = z.object({
   refreshToken: z.string().min(20),
+});
+
+const profileUpdateSchema = z.object({
+  username: z.string().trim().min(3).max(40),
+  email: z.string().trim().email().max(160).optional().or(z.literal("")),
+  gender: z.enum(USER_GENDERS).optional(),
 });
 
 router.post("/api/auth/register", async (request, response, next) => {
@@ -277,6 +283,65 @@ router.get("/api/auth/me", requireAuth, async (request, response) => {
     ok: true,
     user: request.publicUser,
   });
+});
+
+router.patch("/api/auth/me", requireAuth, async (request, response, next) => {
+  try {
+    const parsed = profileUpdateSchema.parse(request.body);
+    const username = parsed.username.trim();
+    const email =
+      request.user.role === "ADMIN"
+        ? buildAdminEmail(username, parsed.email)
+        : buildUserEmail(username, parsed.email);
+
+    const existing = await prisma.user.findFirst({
+      where: {
+        NOT: {
+          id: request.user.id,
+        },
+        OR: [
+          { username: { equals: username, mode: "insensitive" } },
+          { email: { equals: email, mode: "insensitive" } },
+        ],
+      },
+    });
+
+    if (existing) {
+      response.status(409).json({ error: "用户名或邮箱已经被使用了" });
+      return;
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: {
+        id: request.user.id,
+      },
+      data: {
+        username,
+        email,
+        gender: parsed.gender || request.user.gender,
+      },
+    });
+
+    await prisma.activityLog.create({
+      data: {
+        userId: updatedUser.id,
+        action: "update",
+        entityType: "profile",
+        entityId: updatedUser.id,
+        detail: {
+          username: updatedUser.username,
+          gender: updatedUser.gender,
+        },
+      },
+    });
+
+    response.json({
+      ok: true,
+      user: serializeUser(updatedUser),
+    });
+  } catch (error) {
+    handleAuthError(error, response, next);
+  }
 });
 
 async function createSession(user, request) {

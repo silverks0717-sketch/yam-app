@@ -11,6 +11,10 @@ import publicRoutes, { resolveApkPath } from "./routes/public.js";
 const CONTENT_PAGES = new Map([
   ["/", "index.html"],
   ["/auth", "auth.html"],
+  ["/auth/user-login", "auth.html"],
+  ["/auth/user-register", "auth-user-register.html"],
+  ["/auth/admin-login", "auth-admin-login.html"],
+  ["/auth/admin-register", "auth-admin-register.html"],
   ["/app", "app.html"],
   ["/admin", "admin.html"],
   ["/install", "install.html"],

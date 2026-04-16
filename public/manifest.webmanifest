@@ -2,8 +2,8 @@
   "name": "YAM",
   "short_name": "YAM",
   "description": "可注册、可同步、可安装的健康记录系统",
-  "id": "/auth",
-  "start_url": "/auth",
+  "id": "/auth/user-login",
+  "start_url": "/auth/user-login",
   "scope": "/",
   "display_override": ["standalone", "window-controls-overlay"],
   "display": "standalone",
@@ -34,7 +34,7 @@
   "shortcuts": [
     {
       "name": "进入用户端",
-      "url": "/auth?mode=user-login",
+      "url": "/auth/user-login",
       "description": "直接回到你的记录里。"
     },
     {

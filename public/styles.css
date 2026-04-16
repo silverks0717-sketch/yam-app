@@ -1419,6 +1419,141 @@ body.intro-actions-ready .hero-entry-grid {
   accent-color: #f3bf83;
 }
 
+body.profile-sheet-open {
+  overflow: hidden;
+}
+
+.profile-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 140;
+}
+
+.profile-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(32, 21, 18, 0.36);
+  backdrop-filter: blur(14px);
+}
+
+.profile-sheet {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  bottom: 18px;
+  width: min(460px, calc(100% - 36px));
+  display: grid;
+  align-content: start;
+  gap: 18px;
+  padding: 24px;
+  border-radius: 30px;
+  border: 1px solid rgba(126, 75, 104, 0.08);
+  background:
+    radial-gradient(circle at top right, rgba(255, 228, 193, 0.34), transparent 36%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 249, 245, 0.96));
+  box-shadow: 0 30px 80px rgba(62, 39, 34, 0.18);
+  transform: translateX(24px);
+  opacity: 0;
+  transition: transform 0.18s ease, opacity 0.18s ease;
+}
+
+.profile-sheet.show {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+body[data-page="auth"][data-form-factor="desktop"] .identity-stack {
+  grid-template-columns: minmax(420px, 560px) minmax(0, 1fr);
+  align-items: stretch;
+}
+
+body[data-page="auth"][data-form-factor="desktop"] .identity-card,
+body[data-page="auth"][data-form-factor="desktop"] .device-access-panel {
+  min-height: 100%;
+}
+
+body[data-page="auth"][data-form-factor="tablet"] .identity-stack {
+  width: min(100%, 980px);
+}
+
+body[data-page="auth"][data-form-factor="tablet"] .device-access-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+body[data-page="auth"][data-form-factor="tablet"] .device-card-android {
+  grid-column: 1 / -1;
+}
+
+body[data-page="app"][data-form-factor="desktop"] .app-shell {
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 26px;
+}
+
+body[data-page="app"][data-form-factor="desktop"] .record-layout {
+  grid-template-columns: minmax(340px, 420px) minmax(0, 1fr);
+}
+
+body[data-page="app"][data-form-factor="tablet"][data-fold-state="expanded"] .app-shell {
+  grid-template-columns: 232px minmax(0, 1fr);
+  gap: 20px;
+}
+
+body[data-page="app"][data-form-factor="tablet"][data-fold-state="expanded"] .sidebar {
+  min-height: calc(100vh - 28px);
+}
+
+body[data-page="app"][data-form-factor="tablet"][data-fold-state="expanded"] .today-secondary-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+body[data-page="app"][data-form-factor="tablet"][data-fold-state="expanded"] .record-layout {
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+}
+
+body[data-page="app"][data-form-factor="mobile"] .topbar-actions {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+}
+
+body[data-page="app"][data-form-factor="mobile"] .sync-stack,
+body[data-page="app"][data-form-factor="mobile"] .session-chip {
+  grid-column: 1 / -1;
+}
+
+body[data-page="app"][data-form-factor="mobile"] .topbar-actions .button,
+body[data-page="app"][data-form-factor="mobile"] .topbar-actions .sync-stack,
+body[data-page="app"][data-form-factor="mobile"] .topbar-actions .session-chip {
+  width: 100%;
+  justify-content: center;
+}
+
+body[data-page="app"][data-form-factor="mobile"] .record-layout {
+  grid-template-columns: 1fr;
+}
+
+.profile-sheet-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.profile-sheet-head h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  letter-spacing: -0.04em;
+}
+
+.profile-form {
+  gap: 16px;
+}
+
+.profile-choice {
+  gap: 12px;
+}
+
 body.update-gate-open {
   overflow: hidden;
 }
@@ -2179,6 +2314,15 @@ body.update-gate-open {
 
   .topbar-actions {
     width: 100%;
+  }
+
+  .profile-sheet {
+    inset: auto 10px calc(10px + env(safe-area-inset-bottom)) 10px;
+    top: auto;
+    width: auto;
+    max-height: calc(100vh - 20px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    overflow: auto;
+    border-radius: 28px;
   }
 }
 

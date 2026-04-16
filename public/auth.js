@@ -1,4 +1,4 @@
-import { clearSession, getSession, login, register, saveSession } from "./api-client.js";
+import { clearSession, fetchCurrentUser, login, register, saveSession } from "./api-client.js";
 import { APP_NAME } from "./data-model.js";
 import { initPwa } from "./pwa.js";
 import { getDailyQuote } from "./quotes.js";
@@ -13,7 +13,7 @@ const MODE_META = {
   "user-register": {
     kicker: "用户注册",
     title: "从今天开始，把变化留下来。",
-    quote: "填完这几项，就可以开始真正属于你的那一页。",
+    quote: "先把账号建好，剩下的记录留给今天去写。",
     next: "/app",
   },
   "admin-login": {
@@ -24,10 +24,17 @@ const MODE_META = {
   },
   "admin-register": {
     kicker: "管理员注册",
-    title: "用密钥创建后台权限。",
-    quote: "管理员身份会被严格校验，密钥不对就不会放行。",
+    title: "用校验码创建后台权限。",
+    quote: "后台入口应该被严格区分，也应该只显示这一页需要的字段。",
     next: "/admin",
   },
+};
+
+const PATH_BY_MODE = {
+  "user-login": "/auth/user-login",
+  "user-register": "/auth/user-register",
+  "admin-login": "/auth/admin-login",
+  "admin-register": "/auth/admin-register",
 };
 
 const elements = {};
@@ -35,29 +42,23 @@ let currentMode = "user-login";
 
 document.addEventListener("DOMContentLoaded", async () => {
   initPwa();
+  currentMode = resolvePageMode();
 
   const params = new URLSearchParams(window.location.search);
-  const shouldSwitchAccount = params.get("switch") === "1";
-  const hasExplicitMode = hasModeInParams(params);
-
-  if (shouldSwitchAccount) {
+  if (params.get("switch") === "1") {
     clearSession();
-  }
-
-  const session = getSession();
-  if (session.accessToken && !shouldSwitchAccount && !hasExplicitMode && session.user?.role === "ADMIN") {
-    window.location.replace("/admin");
-    return;
-  }
-  if (session.accessToken && !shouldSwitchAccount && !hasExplicitMode) {
-    window.location.replace("/app");
-    return;
+  } else {
+    const restoredUser = await tryRestoreSession();
+    if (restoredUser) {
+      redirectAuthenticatedUser(restoredUser);
+      return;
+    }
   }
 
   cacheElements();
   bindEvents();
+  renderCopy();
   renderQuote();
-  setMode(resolveInitialMode());
   await hydrateDeviceAccess();
 });
 
@@ -66,12 +67,7 @@ function cacheElements() {
   elements.kicker = byId("auth-kicker");
   elements.title = byId("auth-title");
   elements.quote = byId("auth-quote");
-  elements.forms = {
-    "user-login": byId("user-login-form"),
-    "user-register": byId("user-register-form"),
-    "admin-login": byId("admin-login-form"),
-    "admin-register": byId("admin-register-form"),
-  };
+  elements.form = byId("auth-form");
   elements.copyButtons = Array.from(document.querySelectorAll(".copy-link-button"));
   elements.deviceLinks = {
     iphone: byId("iphone-link-text"),
@@ -84,123 +80,93 @@ function cacheElements() {
 }
 
 function bindEvents() {
-  elements.forms["user-login"].addEventListener("submit", handleUserLogin);
-  elements.forms["user-register"].addEventListener("submit", handleUserRegister);
-  elements.forms["admin-login"].addEventListener("submit", handleAdminLogin);
-  elements.forms["admin-register"].addEventListener("submit", handleAdminRegister);
+  elements.form.addEventListener("submit", handleSubmit);
   elements.copyButtons.forEach((button) => {
     button.addEventListener("click", () => copyLink(button.dataset.copyTarget));
   });
 }
 
-async function handleUserLogin(event) {
-  event.preventDefault();
-  const form = event.currentTarget;
-  const submit = form.querySelector("button[type='submit']");
-  submit.disabled = true;
-
-  try {
-    await login({
-      identifier: form.identifier.value.trim(),
-      password: form.password.value,
-    });
-    showMessage("欢迎回来。", "success");
-    window.location.href = resolveNextPath("/app");
-  } catch (error) {
-    showMessage(error.message, "error");
-  } finally {
-    submit.disabled = false;
-  }
-}
-
-async function handleUserRegister(event) {
-  event.preventDefault();
-  const form = event.currentTarget;
-  const submit = form.querySelector("button[type='submit']");
-  submit.disabled = true;
-
-  try {
-    await register({
-      username: form.username.value.trim(),
-      email: form.email.value.trim(),
-      password: form.password.value,
-      gender: readFormGender(form),
-    });
-    showMessage("用户账号创建完成。", "success");
-    window.location.href = resolveNextPath("/app");
-  } catch (error) {
-    showMessage(error.message, "error");
-  } finally {
-    submit.disabled = false;
-  }
-}
-
-async function handleAdminLogin(event) {
-  event.preventDefault();
-  const form = event.currentTarget;
-  const submit = form.querySelector("button[type='submit']");
-  submit.disabled = true;
-
-  try {
-    await submitJson("/api/auth/admin/login", {
-      identifier: form.identifier.value.trim(),
-      password: form.password.value,
-    });
-    showMessage("管理员权限已验证。", "success");
-    window.location.href = "/admin";
-  } catch (error) {
-    showMessage(error.message, "error");
-  } finally {
-    submit.disabled = false;
-  }
-}
-
-async function handleAdminRegister(event) {
-  event.preventDefault();
-  const form = event.currentTarget;
-  const submit = form.querySelector("button[type='submit']");
-  submit.disabled = true;
-
-  try {
-    await submitJson("/api/auth/admin/register", {
-      username: form.username.value.trim(),
-      email: form.email.value.trim(),
-      password: form.password.value,
-      gender: readFormGender(form),
-      adminKey: form.adminKey.value.trim(),
-    });
-    showMessage("管理员账号创建完成。", "success");
-    window.location.href = "/admin";
-  } catch (error) {
-    showMessage(error.message, "error");
-  } finally {
-    submit.disabled = false;
-  }
-}
-
-function setMode(mode) {
-  currentMode = MODE_META[mode] ? mode : "user-login";
-  const meta = MODE_META[currentMode];
+function renderCopy() {
+  const meta = MODE_META[currentMode] || MODE_META["user-login"];
   elements.kicker.textContent = meta.kicker;
   elements.title.textContent = meta.title;
-  elements.quote.textContent = meta.quote;
   document.title = `${APP_NAME} · ${meta.kicker}`;
-
-  Object.entries(elements.forms).forEach(([key, form]) => {
-    form.hidden = key !== currentMode;
-  });
 }
 
 function renderQuote() {
   const quote = getDailyQuote(new Date());
-  if (!elements.quote.textContent) {
-    elements.quote.textContent = quote.cn;
+  const meta = MODE_META[currentMode] || MODE_META["user-login"];
+  elements.quote.textContent = meta.quote || quote.cn;
+}
+
+async function handleSubmit(event) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const submit = form.querySelector("button[type='submit']");
+  submit.disabled = true;
+
+  try {
+    if (currentMode === "user-login") {
+      await login({
+        identifier: form.identifier.value.trim(),
+        password: form.password.value,
+      });
+      showMessage("欢迎回来。", "success");
+      window.location.href = resolveNextPath("/app");
+      return;
+    }
+
+    if (currentMode === "user-register") {
+      await register({
+        username: form.username.value.trim(),
+        password: form.password.value,
+        email: "",
+        gender: "FEMALE",
+      });
+      showMessage("用户账号创建完成。", "success");
+      window.location.href = resolveNextPath("/app");
+      return;
+    }
+
+    if (currentMode === "admin-login") {
+      await submitJson("/api/auth/admin/login", {
+        identifier: form.identifier.value.trim(),
+        password: form.password.value,
+      });
+      showMessage("管理员权限已验证。", "success");
+      window.location.href = resolveNextPath("/admin");
+      return;
+    }
+
+    await submitJson("/api/auth/admin/register", {
+      username: form.username.value.trim(),
+      password: form.password.value,
+      email: "",
+      gender: "FEMALE",
+      adminKey: form.adminKey.value.trim(),
+    });
+    showMessage("管理员账号创建完成。", "success");
+    window.location.href = resolveNextPath("/admin");
+  } catch (error) {
+    showMessage(error.message, "error");
+  } finally {
+    submit.disabled = false;
   }
 }
 
-function showMessage(text, tone = "success") {
-  elements.message.textContent = text;
-  elements.message.className = `status-banner show${tone === "error" ? " error" : ""}`;
+async function tryRestoreSession() {
+  try {
+    const payload = await fetchCurrentUser();
+    return payload.user || null;
+  } catch {
+    clearSession();
+    return null;
+  }
+}
+
+function redirectAuthenticatedUser(user) {
+  const target = user?.role === "ADMIN" ? "/admin" : "/app";
+  window.location.replace(resolveNextPath(target));
 }
 
 async function hydrateDeviceAccess() {
@@ -219,7 +185,7 @@ async function hydrateDeviceAccess() {
     publicOrigin = fallbackOrigin;
   }
 
-  const authUrl = new URL("/auth", publicOrigin).toString();
+  const authUrl = new URL("/auth/user-login", publicOrigin).toString();
   const apkUrl = new URL(downloadUrl, publicOrigin).toString();
 
   elements.deviceLinks.iphone.textContent = authUrl;
@@ -246,37 +212,19 @@ async function copyLink(targetId) {
   }
 }
 
-function resolveInitialMode() {
-  const params = new URLSearchParams(window.location.search);
-  const direct = params.get("mode");
-  if (MODE_META[direct]) {
-    return direct;
-  }
-
-  const role = params.get("role");
-  const action = params.get("action");
-  const combined = role && action ? `${role}-${action}` : "";
-  return MODE_META[combined] ? combined : "user-login";
+function showMessage(text, tone = "success") {
+  elements.message.textContent = text;
+  elements.message.className = `status-banner show${tone === "error" ? " error" : ""}`;
 }
 
-function hasModeInParams(params) {
-  const direct = params.get("mode");
-  if (MODE_META[direct]) {
-    return true;
-  }
-
-  const role = params.get("role");
-  const action = params.get("action");
-  return Boolean(role && action && MODE_META[`${role}-${action}`]);
+function resolvePageMode() {
+  const value = document.body.dataset.authMode;
+  return MODE_META[value] ? value : "user-login";
 }
 
 function resolveNextPath(fallback) {
   const params = new URLSearchParams(window.location.search);
   return params.get("next") || fallback;
-}
-
-function readFormGender(form) {
-  return form.querySelector("input[name='gender']:checked")?.value || "FEMALE";
 }
 
 async function submitJson(url, payload) {
@@ -303,4 +251,9 @@ function byId(id) {
     throw new Error(`找不到元素：${id}`);
   }
   return element;
+}
+
+export function pathForAuthMode(mode, search = "") {
+  const path = PATH_BY_MODE[mode] || PATH_BY_MODE["user-login"];
+  return `${path}${search}`;
 }

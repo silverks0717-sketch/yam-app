@@ -53,7 +53,7 @@ export async function loadVersionPayload(request) {
     latestVersion: versionManifest?.latestVersion || packageJson.version,
     forceUpdate: Boolean(versionManifest?.forceUpdate),
     downloadUrl: versionManifest?.downloadUrl || env.publicDownloadPath,
-    webUrl: versionManifest?.webUrl || "/auth?mode=user-login&switch=1",
+    webUrl: versionManifest?.webUrl || "/auth/user-login",
     privacyUrl: versionManifest?.privacyUrl || "/privacy",
     publicOrigin: resolvePublicOrigin(request),
     updatedAt: versionManifest?.updatedAt || apkStat?.mtime?.toISOString?.() || new Date().toISOString(),

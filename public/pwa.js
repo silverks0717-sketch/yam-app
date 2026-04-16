@@ -1,8 +1,5 @@
 export function initPwa() {
-  const standalone =
-    window.matchMedia?.("(display-mode: standalone)")?.matches || window.navigator.standalone === true;
-  document.body.classList.toggle("is-standalone", Boolean(standalone));
-  document.body.classList.toggle("is-touch", matchMedia("(pointer: coarse)").matches);
+  applyViewportProfile();
 
   if (!("serviceWorker" in navigator)) {
     return;
@@ -11,6 +8,32 @@ export function initPwa() {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("/sw.js").catch(() => {
       // Ignore registration failures in unsupported contexts.
-    });
+      });
   });
+}
+
+function applyViewportProfile() {
+  const standalone =
+    window.matchMedia?.("(display-mode: standalone)")?.matches || window.navigator.standalone === true;
+  const coarsePointer = matchMedia("(pointer: coarse)").matches;
+  const width = window.innerWidth;
+
+  let formFactor = "desktop";
+  if (width <= 820) {
+    formFactor = "mobile";
+  } else if (width <= 1280 || coarsePointer) {
+    formFactor = "tablet";
+  }
+
+  document.body.classList.toggle("is-standalone", Boolean(standalone));
+  document.body.classList.toggle("is-touch", coarsePointer);
+  document.body.dataset.formFactor = formFactor;
+  document.body.dataset.foldState = coarsePointer && width > 820 ? "expanded" : "compact";
+
+  if (!window.__yamViewportBound) {
+    const refreshProfile = () => applyViewportProfile();
+    window.addEventListener("resize", refreshProfile);
+    window.addEventListener("orientationchange", refreshProfile);
+    window.__yamViewportBound = true;
+  }
 }

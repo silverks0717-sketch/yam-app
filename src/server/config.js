@@ -21,7 +21,7 @@ export const env = {
   ),
   jwtSecret: withFallback("JWT_SECRET", "yam-local-dev-access-secret-change-me"),
   accessTokenTtlMinutes: Number(process.env.ACCESS_TOKEN_TTL_MINUTES || 45),
-  refreshTokenTtlDays: Number(process.env.REFRESH_TOKEN_TTL_DAYS || 30),
+  refreshTokenTtlDays: Number(process.env.REFRESH_TOKEN_TTL_DAYS || 7),
   publicAppOrigin: withFallback("PUBLIC_APP_ORIGIN", `http://localhost:${Number(process.env.PORT || 4321)}`),
   publicDownloadPath: withFallback("PUBLIC_DOWNLOAD_PATH", "/downloads/latest.apk"),
   adminUsername: withFallback("ADMIN_USERNAME", "admin"),

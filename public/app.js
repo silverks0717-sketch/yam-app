@@ -14,7 +14,7 @@ import { renderAreaChart, renderBarChart, renderLineChart } from "./charts.js";
 import { createEmptyData, normalizeData } from "./data-model.js";
 import { APP_VERSION } from "./generated-version.js";
 import { getDailyQuote } from "./quotes.js";
-import { getCurrentUser, logout, requireUserSession } from "./api-client.js";
+import { getCurrentUser, logout, requireUserSession, saveSession, updateCurrentUserProfile } from "./api-client.js";
 import { initPwa } from "./pwa.js";
 import { currentPlatform, exportExcelForPlatform, loadStoredData, saveStoredData } from "./storage.js";
 import { enforceVersionGate } from "./version-check.js";
@@ -44,6 +44,7 @@ const state = {
   ui: {
     activeTab: "today",
     recordView: "meal",
+    profileOpen: false,
     editing: {
       mealId: null,
       trainingId: null,
@@ -93,6 +94,15 @@ function cacheElements() {
   elements.userMeta = byId("session-user-meta");
   elements.adminLink = byId("admin-link");
   elements.logoutButton = byId("logout-button");
+  elements.profile = {
+    openButton: byId("profile-open-button"),
+    overlay: byId("profile-overlay"),
+    backdrop: byId("profile-backdrop"),
+    sheet: byId("profile-sheet"),
+    closeButton: byId("profile-close-button"),
+    cancelButton: byId("profile-cancel-button"),
+    form: byId("profile-form"),
+  };
   elements.navButtons = Array.from(document.querySelectorAll(".nav-button"));
   elements.panels = Array.from(document.querySelectorAll(".panel"));
   elements.exportButtons = Array.from(document.querySelectorAll(".export-excel-button"));
@@ -209,7 +219,13 @@ function bindEvents() {
   bindSelectionControls("trainings", elements.training);
   bindSelectionControls("bodyMetrics", elements.body);
   elements.logoutButton.addEventListener("click", handleLogout);
+  elements.profile.openButton.addEventListener("click", openProfileSheet);
+  elements.profile.closeButton.addEventListener("click", closeProfileSheet);
+  elements.profile.cancelButton.addEventListener("click", closeProfileSheet);
+  elements.profile.backdrop.addEventListener("click", closeProfileSheet);
+  elements.profile.form.addEventListener("submit", handleProfileSubmit);
   window.addEventListener("yam:sync-status", handleSyncStatus);
+  window.addEventListener("keydown", handleGlobalKeydown);
 }
 
 function bindSelectionControls(key, group) {
@@ -286,6 +302,7 @@ function renderSession() {
       ? `${labelForGender(user.gender)} · 管理员 · 云端同步已开启`
       : `${labelForGender(user.gender)} · 云端同步已开启`;
   elements.adminLink.hidden = user.role !== "ADMIN";
+  hydrateProfileForm();
 }
 
 function renderDailyQuote() {
@@ -867,7 +884,7 @@ function showMessage(text, tone = "success", persist = false) {
 
 async function handleLogout() {
   await logout();
-  window.location.href = "/auth?mode=user-login&switch=1";
+  window.location.href = "/auth/user-login?switch=1";
 }
 
 function handleSyncStatus(event) {
@@ -903,6 +920,77 @@ function createSelectionState() {
     active: false,
     ids: new Set(),
   };
+}
+
+function openProfileSheet() {
+  state.ui.profileOpen = true;
+  hydrateProfileForm();
+  elements.profile.overlay.hidden = false;
+  document.body.classList.add("profile-sheet-open");
+  window.requestAnimationFrame(() => {
+    elements.profile.sheet.classList.add("show");
+  });
+}
+
+function closeProfileSheet() {
+  state.ui.profileOpen = false;
+  elements.profile.sheet.classList.remove("show");
+  document.body.classList.remove("profile-sheet-open");
+  window.setTimeout(() => {
+    if (!state.ui.profileOpen) {
+      elements.profile.overlay.hidden = true;
+    }
+  }, 180);
+}
+
+function hydrateProfileForm() {
+  const user = state.sessionUser || getCurrentUser();
+  if (!user) return;
+
+  elements.profile.form.username.value = user.username || "";
+  elements.profile.form.email.value = normalizeEditableEmail(user.email);
+  elements.profile.form.subtitle.value = state.data.profile?.subtitle || "";
+  const genderInput = elements.profile.form.querySelector(`input[name='gender'][value='${user.gender || "FEMALE"}']`);
+  if (genderInput) {
+    genderInput.checked = true;
+  }
+}
+
+async function handleProfileSubmit(event) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const submit = form.querySelector("button[type='submit']");
+  submit.disabled = true;
+
+  try {
+    const profileResponse = await updateCurrentUserProfile({
+      username: form.username.value.trim(),
+      email: form.email.value.trim(),
+      gender: form.querySelector("input[name='gender']:checked")?.value || "FEMALE",
+    });
+
+    state.sessionUser = profileResponse.user;
+    saveSession({ user: profileResponse.user });
+    state.data.profile.subtitle = form.subtitle.value.trim();
+    await persistData("个人信息已保存");
+    renderSession();
+    closeProfileSheet();
+  } catch (error) {
+    console.error(error);
+    showMessage(`保存失败：${error.message}`, "error", true);
+  } finally {
+    submit.disabled = false;
+  }
+}
+
+function handleGlobalKeydown(event) {
+  if (event.key === "Escape" && state.ui.profileOpen) {
+    closeProfileSheet();
+  }
+}
+
+function normalizeEditableEmail(email = "") {
+  return /@(user|admin)\.yam\.local$/i.test(email) ? "" : email;
 }
 
 function byId(id) {

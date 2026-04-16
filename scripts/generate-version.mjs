@@ -35,7 +35,7 @@ const payload = {
   latestVersion: packageJson.version,
   forceUpdate: Boolean(releaseConfig.forceUpdate),
   downloadUrl: "/downloads/latest.apk",
-  webUrl: "/auth?mode=user-login&switch=1",
+  webUrl: "/auth/user-login",
   privacyUrl: "/privacy",
   updatedAt,
   changelog,

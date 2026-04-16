@@ -56,21 +56,22 @@
             <p id="page-subtitle" class="topbar-copy">打开先看趋势，再决定今天补哪一条。</p>
           </div>
 
-          <div class="topbar-actions">
-            <div class="sync-stack">
-              <span id="sync-indicator" class="sync-indicator synced">已同步</span>
-              <small id="sync-hint" class="muted-text">云端同步已开启</small>
-            </div>
+	          <div class="topbar-actions">
+	            <div class="sync-stack">
+	              <span id="sync-indicator" class="sync-indicator synced">已同步</span>
+	              <small id="sync-hint" class="muted-text">云端同步已开启</small>
+	            </div>
             <div class="session-chip">
               <div>
-                <strong id="session-user-name">已登录</strong>
-                <p id="session-user-meta" class="record-meta">云端同步已开启</p>
-              </div>
-            </div>
-            <a id="admin-link" class="button ghost" href="/admin" hidden>总控后台</a>
-            <a class="button ghost" href="/install">下载 APK</a>
-            <button class="button subtle export-excel-button" type="button">导出 Excel</button>
-            <button id="logout-button" class="button ghost" type="button">退出登录</button>
+	                <strong id="session-user-name">已登录</strong>
+	                <p id="session-user-meta" class="record-meta">云端同步已开启</p>
+	              </div>
+	            </div>
+	            <button id="profile-open-button" class="button ghost" type="button">个人信息</button>
+	            <a id="admin-link" class="button ghost" href="/admin" hidden>总控后台</a>
+	            <a class="button ghost" href="/install">下载 APK</a>
+	            <button class="button subtle export-excel-button" type="button">导出 Excel</button>
+	            <button id="logout-button" class="button ghost" type="button">退出登录</button>
           </div>
         </header>
 
@@ -460,7 +461,7 @@
           </div>
         </section>
 
-        <section id="review" class="panel">
+	        <section id="review" class="panel">
           <div class="panel-header">
             <div>
               <h3>双周回顾</h3>
@@ -499,11 +500,54 @@
               <p id="review-reminder" class="review-copy"></p>
             </article>
           </div>
-        </section>
-      </main>
-    </div>
+	        </section>
+	      </main>
+	    </div>
 
-    <script src="/vendor/xlsx.full.min.js"></script>
-    <script type="module" src="/app.js"></script>
-  </body>
+	    <div id="profile-overlay" class="profile-overlay" hidden>
+	      <div id="profile-backdrop" class="profile-backdrop"></div>
+	      <aside id="profile-sheet" class="profile-sheet" aria-labelledby="profile-title" aria-modal="true" role="dialog">
+	        <div class="profile-sheet-head">
+	          <div>
+	            <p class="kicker">个人信息</p>
+	            <h3 id="profile-title">编辑你的资料</h3>
+	          </div>
+	          <button id="profile-close-button" class="button ghost compact" type="button">关闭</button>
+	        </div>
+
+	        <form id="profile-form" class="data-form profile-form">
+	          <label>
+	            <span>用户名</span>
+	            <input name="username" type="text" maxlength="40" autocomplete="username" required />
+	          </label>
+	          <label>
+	            <span>邮箱（可选）</span>
+	            <input name="email" type="email" maxlength="160" autocomplete="email" placeholder="you@example.com" />
+	          </label>
+	          <fieldset class="identity-choice profile-choice">
+	            <legend>性别</legend>
+	            <label class="choice-pill">
+	              <input name="gender" type="radio" value="FEMALE" />
+	              <span>女</span>
+	            </label>
+	            <label class="choice-pill">
+	              <input name="gender" type="radio" value="MALE" />
+	              <span>男</span>
+	            </label>
+	          </fieldset>
+	          <label>
+	            <span>一句状态</span>
+	            <input name="subtitle" type="text" maxlength="80" placeholder="给自己留一句短一点的话" />
+	          </label>
+	          <div class="button-row">
+	            <button class="button primary" type="submit">保存信息</button>
+	            <button id="profile-cancel-button" class="button ghost" type="button">取消</button>
+	          </div>
+	        </form>
+	      </aside>
+	    </div>
+	
+	    <script src="/vendor/xlsx.full.min.js"></script>
+	    <script type="module" src="/app.js"></script>
+	  </body>
 </html>

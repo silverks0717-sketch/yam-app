@@ -404,7 +404,7 @@ function handleUserListClick(event) {
 
 async function handleLogout() {
   await logout();
-  window.location.href = "/auth?mode=admin-login&switch=1";
+  window.location.href = "/auth/admin-login?switch=1";
 }
 
 function showMessage(text, tone = "success") {
