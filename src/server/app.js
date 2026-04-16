@@ -62,7 +62,7 @@ export async function startServer() {
       extensions: ["html"],
       setHeaders: (response, filePath) => {
         const normalizedPath = filePath.replaceAll("\\", "/");
-        const noStoreTargets = [".html", "manifest.webmanifest", "sw.js", "version.json"];
+        const noStoreTargets = [".html", ".js", ".css", "manifest.webmanifest", "sw.js", "version.json"];
 
         if (noStoreTargets.some((suffix) => normalizedPath.endsWith(suffix))) {
           response.setHeader("Cache-Control", "no-store");

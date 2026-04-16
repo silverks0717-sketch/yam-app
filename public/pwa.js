@@ -6,8 +6,22 @@ export function initPwa() {
   }
 
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/sw.js").catch(() => {
-      // Ignore registration failures in unsupported contexts.
+    navigator.serviceWorker
+      .register("/sw.js")
+      .then((registration) => {
+        registration.update().catch(() => {});
+
+        if (!window.__yamControllerBound) {
+          navigator.serviceWorker.addEventListener("controllerchange", () => {
+            if (window.__yamControllerReloading) return;
+            window.__yamControllerReloading = true;
+            window.location.reload();
+          });
+          window.__yamControllerBound = true;
+        }
+      })
+      .catch(() => {
+        // Ignore registration failures in unsupported contexts.
       });
   });
 }

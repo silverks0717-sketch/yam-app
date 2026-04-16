@@ -1,4 +1,4 @@
-const CACHE_NAME = "yam-shell-v5";
+const CACHE_NAME = "yam-shell-v6";
 const PRECACHE = [
   "/",
   "/auth",
@@ -55,23 +55,43 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  event.respondWith(
-    caches.match(request).then((cached) => {
-      if (cached) {
-        return cached;
-      }
+  const destination = request.destination || "";
+  const navigationRequest = request.mode === "navigate" || destination === "document";
+  const networkFirst =
+    navigationRequest ||
+    ["script", "style", "manifest", "font"].includes(destination) ||
+    /\.(?:js|css|html|webmanifest)$/i.test(new URL(request.url).pathname);
 
-      return fetch(request)
-        .then((response) => {
-          if (!response || response.status !== 200 || response.type === "opaque") {
-            return response;
-          }
-
-          const nextResponse = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, nextResponse));
-          return response;
-        })
-        .catch(() => caches.match("/"));
-    })
-  );
+  event.respondWith(networkFirst ? networkFirstResponse(request) : cacheFirstResponse(request));
 });
+
+async function networkFirstResponse(request) {
+  try {
+    const response = await fetch(request);
+    if (response && response.status === 200 && response.type !== "opaque") {
+      const cache = await caches.open(CACHE_NAME);
+      cache.put(request, response.clone());
+    }
+    return response;
+  } catch {
+    const cached = await caches.match(request);
+    if (cached) {
+      return cached;
+    }
+    return caches.match("/auth/user-login");
+  }
+}
+
+async function cacheFirstResponse(request) {
+  const cached = await caches.match(request);
+  if (cached) {
+    return cached;
+  }
+
+  const response = await fetch(request);
+  if (response && response.status === 200 && response.type !== "opaque") {
+    const cache = await caches.open(CACHE_NAME);
+    cache.put(request, response.clone());
+  }
+  return response;
+}
