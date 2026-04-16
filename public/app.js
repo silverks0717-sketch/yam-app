@@ -509,29 +509,6 @@ function renderTrainingCard(entry) {
   `;
 }
 
-function renderBodyCard(entry) {
-  const selection = state.ui.selection.bodyMetrics;
-  const selected = selection.ids.has(entry.id);
-
-  return `
-    <article class="record-card ${selected ? "selected" : ""}" data-id="${escapeHtml(entry.id)}" data-kind="bodyMetrics">
-      <div class="record-card-top">
-        <label class="record-check ${selection.active ? "active" : ""}">
-          <input type="checkbox" data-select-id="${escapeHtml(entry.id)}" ${selected ? "checked" : ""} />
-        </label>
-        <div>
-          <h4 class="record-title">${escapeHtml(formatDisplayDate(entry.date))}</h4>
-          <p class="record-meta">${escapeHtml(buildBodyStats(entry))}</p>
-        </div>
-      </div>
-      <div class="record-actions">
-        <button class="button ghost" data-action="edit" type="button">编辑</button>
-        <button class="button ghost" data-action="delete" type="button">删除</button>
-      </div>
-    </article>
-  `;
-}
-
 function renderEmptyList(text) {
   return `<div class="record-card"><p class="record-meta">${escapeHtml(text)}</p></div>`;
 }

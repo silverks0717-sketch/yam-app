@@ -4,6 +4,7 @@
   --tracking-tight: -0.028em;
   --tracking-base: 0.014em;
   --tracking-relaxed: 0.022em;
+  --tracking-ui: 0.018em;
   --weight-display: 620;
   --weight-title: 560;
   --weight-label: 520;
@@ -53,7 +54,7 @@ body {
     linear-gradient(180deg, #fbf7f4 0%, #f6f1ef 100%);
   font-family: var(--font-body);
   font-weight: var(--weight-body);
-  line-height: 1.58;
+  line-height: 1.62;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   letter-spacing: var(--tracking-base);
@@ -211,6 +212,19 @@ svg {
   color: var(--text-soft);
   line-height: 1.65;
   letter-spacing: 0.012em;
+}
+
+.button,
+.segmented-button,
+.count-pill,
+.tag,
+.data-form span,
+.record-title,
+.list-toolbar h3,
+.selection-bar span,
+.status-card strong,
+.review-stat strong {
+  font-family: var(--font-display);
 }
 
 .nav-list {
@@ -532,6 +546,7 @@ svg {
   padding: 0.82rem 1.18rem;
   font-weight: var(--weight-title);
   transition: transform 0.1s ease, border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+  letter-spacing: var(--tracking-ui);
 }
 
 .button:active {
@@ -649,6 +664,10 @@ svg {
   grid-template-columns: minmax(320px, 390px) minmax(0, 1fr);
 }
 
+.record-layout-single {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 .span-two {
   grid-column: span 2;
 }
@@ -656,7 +675,9 @@ svg {
 .card {
   padding: 22px;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.9));
+    radial-gradient(circle at top right, rgba(255, 236, 214, 0.42), transparent 32%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 252, 249, 0.88));
+  box-shadow: 0 18px 34px rgba(118, 84, 75, 0.075);
 }
 
 .chart-card {
@@ -697,9 +718,12 @@ svg {
   margin-bottom: 18px;
   padding: 6px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.9);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 248, 244, 0.82)),
+    linear-gradient(135deg, rgba(255, 235, 225, 0.22), rgba(255, 255, 255, 0.08));
   border: 1px solid rgba(126, 75, 104, 0.08);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 12px 26px rgba(112, 79, 71, 0.06);
+  backdrop-filter: blur(14px);
 }
 
 .segmented-button {
@@ -708,6 +732,8 @@ svg {
   background: transparent;
   color: var(--text-soft);
   padding: 0.58rem 1rem;
+  font-weight: var(--weight-title);
+  letter-spacing: var(--tracking-ui);
 }
 
 .segmented-button.active {
@@ -738,7 +764,8 @@ svg {
 .data-form span {
   color: var(--text-soft);
   font-size: 0.92rem;
-  letter-spacing: 0.012em;
+  letter-spacing: 0.016em;
+  font-weight: var(--weight-label);
 }
 
 .form-grid.two {
@@ -757,10 +784,13 @@ svg {
   border-radius: 16px;
   border: 1px solid rgba(126, 75, 104, 0.08);
   background:
+    radial-gradient(circle at top right, rgba(255, 239, 223, 0.42), transparent 36%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 250, 246, 0.78)),
     linear-gradient(135deg, rgba(255, 232, 220, 0.22), rgba(255, 255, 255, 0.08));
   outline: none;
   letter-spacing: 0.01em;
+  line-height: 1.46;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.52), 0 8px 18px rgba(111, 78, 69, 0.03);
 }
 
 .data-form input:focus,
@@ -780,9 +810,12 @@ svg {
   gap: 10px;
   padding: 14px;
   border-radius: 16px;
-  background: linear-gradient(180deg, #fffaf6, #fff7f4);
+  background:
+    radial-gradient(circle at top right, rgba(255, 238, 219, 0.34), transparent 36%),
+    linear-gradient(180deg, rgba(255, 250, 246, 0.95), rgba(255, 247, 244, 0.88));
   border: 1px solid rgba(126, 75, 104, 0.08);
   color: var(--text-soft);
+  box-shadow: 0 12px 24px rgba(109, 76, 68, 0.045);
 }
 
 .toggle-card input {
@@ -793,6 +826,8 @@ svg {
 
 .list-toolbar h3 {
   margin: 0;
+  font-weight: var(--weight-display);
+  letter-spacing: -0.014em;
 }
 
 .count-pill,
@@ -808,6 +843,8 @@ svg {
   margin-top: 8px;
   background: rgba(126, 75, 104, 0.08);
   color: var(--berry);
+  font-weight: var(--weight-title);
+  letter-spacing: var(--tracking-ui);
 }
 
 .selection-bar {
@@ -820,6 +857,8 @@ svg {
   border-radius: 18px;
   background: linear-gradient(135deg, rgba(241, 213, 222, 0.5), rgba(255, 247, 235, 0.76));
   border: 1px solid rgba(126, 75, 104, 0.08);
+  box-shadow: 0 12px 24px rgba(109, 76, 68, 0.05);
+  backdrop-filter: blur(16px);
 }
 
 .record-list,
@@ -838,10 +877,12 @@ svg {
 .review-stat {
   border-radius: 22px;
   background:
+    radial-gradient(circle at top right, rgba(255, 238, 220, 0.32), transparent 34%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 250, 246, 0.86)),
     linear-gradient(135deg, rgba(255, 232, 220, 0.24), rgba(255, 255, 255, 0.08));
   border: 1px solid rgba(126, 75, 104, 0.08);
   box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(16px);
 }
 
 .record-card {
@@ -892,7 +933,7 @@ svg {
   margin: 0;
   font-size: 1rem;
   font-weight: var(--weight-title);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.012em;
 }
 
 .user-card-meta {
@@ -936,6 +977,7 @@ svg {
 
 .review-copy {
   font-size: 1.06rem;
+  line-height: 1.7;
 }
 
 .short-copy {
@@ -1704,7 +1746,8 @@ body[data-page="app"][data-form-factor="mobile"] .toggle-card,
 body[data-page="app"][data-form-factor="mobile"] .record-card,
 body[data-page="app"][data-form-factor="mobile"] .review-stat,
 body[data-page="app"][data-form-factor="mobile"] .selection-bar,
-body[data-page="app"][data-form-factor="mobile"] .segmented {
+body[data-page="app"][data-form-factor="mobile"] .segmented,
+body[data-page="app"][data-form-factor="mobile"] .count-pill {
   backdrop-filter: blur(16px);
 }
 
@@ -1795,6 +1838,35 @@ body[data-page="app"][data-form-factor="mobile"] .panel-header {
 body[data-page="app"][data-form-factor="mobile"] .card,
 body[data-page="app"][data-form-factor="mobile"] .empty-panel {
   padding: 16px;
+}
+
+body[data-page="app"][data-form-factor="mobile"] .card-head h3,
+body[data-page="app"][data-form-factor="mobile"] .panel-header h3,
+body[data-page="app"][data-form-factor="mobile"] .list-toolbar h3,
+body[data-page="app"][data-form-factor="mobile"] .record-title,
+body[data-page="app"][data-form-factor="mobile"] .segmented-button,
+body[data-page="app"][data-form-factor="mobile"] .button,
+body[data-page="app"][data-form-factor="mobile"] .count-pill,
+body[data-page="app"][data-form-factor="mobile"] .data-form span {
+  font-family: var(--font-display);
+}
+
+body[data-page="app"][data-form-factor="mobile"] .record-meta,
+body[data-page="app"][data-form-factor="mobile"] .muted-text,
+body[data-page="app"][data-form-factor="mobile"] .review-copy {
+  letter-spacing: 0.016em;
+}
+
+body[data-page="app"][data-form-factor="mobile"] .list-card,
+body[data-page="app"][data-form-factor="mobile"] .form-card,
+body[data-page="app"][data-form-factor="mobile"] .short-copy {
+  background:
+    radial-gradient(circle at top right, rgba(255, 236, 214, 0.28), transparent 32%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.84), rgba(255, 248, 243, 0.72));
+}
+
+body[data-page="app"][data-form-factor="mobile"] .record-layout-single .form-card {
+  min-width: 0;
 }
 
 body[data-page="app"][data-form-factor="mobile"] .segmented {
