@@ -12,4 +12,4 @@ RUN npm run release:prepare && npm run db:generate
 ENV NODE_ENV=production
 EXPOSE 4321
 
-CMD ["node", "server.js"]
+CMD ["npm", "run", "start:prod"]
