@@ -1,0 +1,46 @@
+{
+  "name": "YAM",
+  "short_name": "YAM",
+  "description": "可注册、可同步、可安装的健康记录系统",
+  "id": "/auth",
+  "start_url": "/auth",
+  "scope": "/",
+  "display_override": ["standalone", "window-controls-overlay"],
+  "display": "standalone",
+  "background_color": "#1e140f",
+  "theme_color": "#2f1d16",
+  "orientation": "portrait-primary",
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "/assets/icon/yam-icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/icon/yam-icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/icon/yam-apple-touch-icon.png",
+      "type": "image/png",
+      "sizes": "180x180",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "进入用户端",
+      "url": "/auth?mode=user-login",
+      "description": "直接回到你的记录里。"
+    },
+    {
+      "name": "下载 Android APK",
+      "url": "/install",
+      "description": "打开安装页并下载最新 APK。"
+    }
+  ]
+}

@@ -1,0 +1,184 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  FROZEN
+}
+
+enum UserGender {
+  MALE
+  FEMALE
+}
+
+enum ExportType {
+  USER_XLSX
+  ADMIN_USER_XLSX
+}
+
+enum ExportStatus {
+  GENERATED
+  FAILED
+}
+
+model User {
+  id                String        @id @default(cuid())
+  username          String        @unique @db.VarChar(40)
+  email             String        @unique @db.VarChar(160)
+  passwordHash      String
+  gender            UserGender
+  role              UserRole      @default(USER)
+  status            UserStatus    @default(ACTIVE)
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  lastLoginAt       DateTime?
+  sessions          UserSession[]
+  meals             Meal[]
+  trainings         Training[]
+  bodyMetrics       BodyMetric[]
+  subjectExports    Export[]      @relation("SubjectExports")
+  requestedExports  Export[]      @relation("RequestedExports")
+  adminLogsAsActor  AdminLog[]    @relation("AdminActor")
+  adminLogsAsTarget AdminLog[]    @relation("AdminTarget")
+  activityLogs      ActivityLog[]
+
+  @@index([role])
+  @@index([status])
+  @@map("users")
+}
+
+model UserSession {
+  id               String    @id @default(cuid())
+  userId           String
+  refreshTokenHash String    @unique
+  userAgent        String?
+  ipAddress        String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  lastUsedAt       DateTime  @default(now())
+  expiresAt        DateTime
+  revokedAt        DateTime?
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+  @@map("user_sessions")
+}
+
+model Meal {
+  id            String   @id @default(cuid())
+  userId        String
+  dateKey       String   @db.VarChar(10)
+  timeKey       String?  @db.VarChar(5)
+  occurredAt    DateTime
+  mealType      String   @db.VarChar(20)
+  foodName      String   @db.VarChar(120)
+  portion       String?  @db.VarChar(40)
+  highCalorie   Boolean  @default(false)
+  social        Boolean  @default(false)
+  note          String?  @db.VarChar(240)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, occurredAt])
+  @@index([userId, dateKey])
+  @@map("meals")
+}
+
+model Training {
+  id            String   @id @default(cuid())
+  userId        String
+  dateKey       String   @db.VarChar(10)
+  timeKey       String?  @db.VarChar(5)
+  occurredAt    DateTime
+  trainingName  String   @db.VarChar(120)
+  duration      Int?
+  details       String?  @db.VarChar(500)
+  weight        Float?
+  reps          Int?
+  sets          Int?
+  note          String?  @db.VarChar(240)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, occurredAt])
+  @@index([userId, dateKey])
+  @@map("trainings")
+}
+
+model BodyMetric {
+  id            String   @id @default(cuid())
+  userId        String
+  dateKey       String   @db.VarChar(10)
+  occurredAt    DateTime
+  weight        Float?
+  waist         Float?
+  bodyFat       Float?
+  boneMuscle    Float?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, occurredAt])
+  @@index([userId, dateKey])
+  @@map("body_metrics")
+}
+
+model Export {
+  id            String       @id @default(cuid())
+  type          ExportType
+  status        ExportStatus @default(GENERATED)
+  fileName      String       @db.VarChar(180)
+  meta          Json?
+  subjectUserId String?
+  requestedById String?
+  createdAt     DateTime     @default(now())
+  subjectUser   User?        @relation("SubjectExports", fields: [subjectUserId], references: [id], onDelete: SetNull)
+  requestedBy   User?        @relation("RequestedExports", fields: [requestedById], references: [id], onDelete: SetNull)
+
+  @@index([subjectUserId, createdAt])
+  @@index([requestedById, createdAt])
+  @@map("exports")
+}
+
+model AdminLog {
+  id           String   @id @default(cuid())
+  actorId      String
+  targetUserId String?
+  action       String   @db.VarChar(80)
+  detail       Json?
+  createdAt    DateTime @default(now())
+  actor        User     @relation("AdminActor", fields: [actorId], references: [id], onDelete: Cascade)
+  targetUser   User?    @relation("AdminTarget", fields: [targetUserId], references: [id], onDelete: SetNull)
+
+  @@index([actorId, createdAt])
+  @@index([targetUserId, createdAt])
+  @@map("admin_logs")
+}
+
+model ActivityLog {
+  id         String   @id @default(cuid())
+  userId     String
+  action     String   @db.VarChar(40)
+  entityType String   @db.VarChar(30)
+  entityId   String?  @db.VarChar(120)
+  detail     Json?
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([action, createdAt])
+  @@map("activity_logs")
+}

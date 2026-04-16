@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>YAM · 官网与下载</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/icon/yam-icon-192.png" />
+    <link rel="apple-touch-icon" href="/assets/icon/yam-apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="YAM" />
+  </head>
+  <body data-page="landing">
+    <main class="policy-shell">
+      <section class="marketing-hero">
+        <a class="brand-inline" href="/">
+          <img class="brand-icon" src="/assets/icon/yam-icon-192.png" alt="YAM 图标" />
+          <div>
+            <strong>YAM</strong>
+            <span>官网与下载</span>
+          </div>
+        </a>
+
+        <div class="hero-layout" style="margin-top:24px;">
+          <div class="hero-copy-block">
+	            <p class="kicker">官网 · Android · PWA</p>
+	            <h1 class="marketing-title" style="font-size:clamp(2.4rem, 4vw, 3.6rem);">打开官网，就能直接开始用。</h1>
+            <p class="marketing-copy">
+	              这里既是 YAM 的下载入口，也是发给朋友就能直接打开的官网。安卓可以下载 APK，iPhone / iPad 可以直接用 Web 或添加到主屏幕。
+            </p>
+	            <div class="marketing-actions">
+	              <a class="button primary" href="/downloads/latest.apk">下载 Android APK</a>
+	              <a class="button subtle" href="/auth?mode=user-login&switch=1">进入 Web 版</a>
+	              <a class="button ghost" href="/privacy">隐私说明</a>
+	            </div>
+          </div>
+
+          <div class="hero-preview-card">
+            <div class="preview-header">
+              <span class="preview-pill">固定下载地址</span>
+              <span class="preview-note">/downloads/latest.apk</span>
+            </div>
+            <div class="preview-summary" style="margin-top:18px;">
+              <strong>安装步骤</strong>
+              <p>1. 下载 APK。2. 在手机里点开。3. 第一次安装时允许此来源安装。4. 确认安装。5. 打开使用。</p>
+            </div>
+            <div class="preview-summary" style="margin-top:12px;">
+	              <strong>更新方式</strong>
+	              <p>每次打开 App 或 Web 版都会做版本检查；安卓会跳到最新 APK，iPhone / iPad 会直接进入最新 Web / PWA。</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="marketing-grid" style="margin-top:18px;">
+        <article class="card marketing-card">
+          <p class="kicker">Android</p>
+          <h2>适合华为 / 安卓手机</h2>
+          <p class="muted-text">第一阶段优先照顾安卓下载安装路径，不走 App Store 审核流程。</p>
+        </article>
+        <article class="card marketing-card">
+          <p class="kicker">Web 版</p>
+          <h2>不用安装也能直接使用</h2>
+          <p class="muted-text">打开网页就能注册、登录、记录和看图表，适合先试用或临时从电脑继续记录。</p>
+        </article>
+        <article class="card marketing-card">
+          <p class="kicker">iPhone / iPad</p>
+          <h2>Safari 里可添加到主屏幕</h2>
+          <p class="muted-text">不走 App Store。用 Safari 打开首页，点“添加到主屏幕”，就能像 App 一样使用 Web 版。</p>
+        </article>
+        <article class="card marketing-card">
+          <p class="kicker">更新方式</p>
+          <h2>稳定下载链接</h2>
+          <p class="muted-text">以后更新 APK，只要替换同一路径的文件，用户记住的地址就不用改。</p>
+        </article>
+      </section>
+    </main>
+    <script type="module">
+      import { initPwa } from "/pwa.js";
+      initPwa();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">YAM</string>
+    <string name="title_activity_main">YAM</string>
+    <string name="package_name">com.yam.app</string>
+    <string name="custom_url_scheme">com.yam.app</string>
+</resources>

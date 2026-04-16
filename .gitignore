@@ -1,0 +1,9 @@
+node_modules
+.DS_Store
+.env
+public/downloads/*.apk
+android/app/build
+android/.gradle
+android/local.properties
+dist
+coverage

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#241711" />
+    <title>YAM · 身份入口</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/icon/yam-icon-192.png" />
+    <link rel="apple-touch-icon" href="/assets/icon/yam-apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="YAM" />
+  </head>
+  <body data-page="auth">
+    <main class="identity-shell">
+      <section class="identity-stage">
+        <div class="identity-background">
+          <span class="aurora aurora-a"></span>
+          <span class="aurora aurora-b"></span>
+          <span class="aurora aurora-c"></span>
+          <span class="identity-drape identity-drape-a"></span>
+          <span class="identity-drape identity-drape-b"></span>
+          <span class="identity-dot identity-dot-a"></span>
+          <span class="identity-dot identity-dot-b"></span>
+        </div>
+
+        <a class="brand-inline identity-brand" href="/">
+          <img class="brand-icon" src="/assets/icon/yam-icon-192.png" alt="YAM 图标" />
+          <div>
+            <strong>YAM</strong>
+            <span>user / admin</span>
+          </div>
+        </a>
+
+        <div class="identity-stack">
+          <section class="identity-card">
+            <div class="identity-copy">
+              <p id="auth-kicker" class="kicker">用户登录</p>
+              <h1 id="auth-title">回到你的记录里。</h1>
+              <p id="auth-quote" class="identity-quote"></p>
+            </div>
+
+            <div id="auth-message" class="status-banner" aria-live="polite"></div>
+
+            <form id="user-login-form" class="data-form identity-form">
+              <label>
+                <span>用户名或邮箱</span>
+                <input name="identifier" type="text" autocomplete="username" placeholder="用户名 / 邮箱" required />
+              </label>
+              <label>
+                <span>密码</span>
+                <input name="password" type="password" autocomplete="current-password" placeholder="至少 8 位" required />
+              </label>
+              <button class="button primary auth-submit" type="submit">进入用户端</button>
+            </form>
+
+            <form id="user-register-form" class="data-form identity-form" hidden>
+              <label>
+                <span>用户名</span>
+                <input name="username" type="text" autocomplete="username" maxlength="40" placeholder="3-40 个字符" required />
+              </label>
+              <label>
+                <span>邮箱（可选）</span>
+                <input name="email" type="email" autocomplete="email" maxlength="160" placeholder="you@example.com" />
+              </label>
+              <label>
+                <span>密码</span>
+                <input name="password" type="password" autocomplete="new-password" placeholder="至少 8 位" required />
+              </label>
+              <fieldset class="identity-choice">
+                <legend>性别</legend>
+                <label class="choice-pill">
+                  <input name="gender" type="radio" value="FEMALE" checked />
+                  <span>女</span>
+                </label>
+                <label class="choice-pill">
+                  <input name="gender" type="radio" value="MALE" />
+                  <span>男</span>
+                </label>
+              </fieldset>
+              <button class="button primary auth-submit" type="submit">创建用户账号</button>
+            </form>
+
+            <form id="admin-login-form" class="data-form identity-form" hidden>
+              <label>
+                <span>管理员用户名或邮箱</span>
+                <input name="identifier" type="text" autocomplete="username" maxlength="160" placeholder="管理员用户名 / 邮箱" required />
+              </label>
+              <label>
+                <span>密码</span>
+                <input name="password" type="password" autocomplete="current-password" placeholder="至少 8 位" required />
+              </label>
+              <button class="button primary auth-submit" type="submit">进入总控后台</button>
+            </form>
+
+            <form id="admin-register-form" class="data-form identity-form" hidden>
+              <label>
+                <span>管理员用户名</span>
+                <input name="username" type="text" autocomplete="username" maxlength="40" placeholder="管理员用户名" required />
+              </label>
+              <label>
+                <span>邮箱（可选）</span>
+                <input name="email" type="email" autocomplete="email" maxlength="160" placeholder="admin@example.com" />
+              </label>
+              <label>
+                <span>密码</span>
+                <input name="password" type="password" autocomplete="new-password" placeholder="至少 8 位" required />
+              </label>
+              <fieldset class="identity-choice">
+                <legend>性别</legend>
+                <label class="choice-pill">
+                  <input name="gender" type="radio" value="FEMALE" checked />
+                  <span>女</span>
+                </label>
+                <label class="choice-pill">
+                  <input name="gender" type="radio" value="MALE" />
+                  <span>男</span>
+                </label>
+              </fieldset>
+              <label>
+                <span>管理员密钥</span>
+                <input name="adminKey" type="password" inputmode="numeric" maxlength="8" placeholder="输入 8 位管理员密钥" required />
+              </label>
+              <button class="button primary auth-submit" type="submit">创建管理员账号</button>
+            </form>
+          </section>
+
+          <section class="device-access-panel" aria-label="多端入口">
+            <div class="device-access-head">
+              <p class="kicker">iPhone · iPad · Android</p>
+              <h2>直接打开，用最真实的那条路径。</h2>
+              <p class="device-access-copy">iPhone 和 iPad 不走 App Store，直接用 Safari 打开公开网址，再添加到主屏幕。Android 继续走 APK 安装。</p>
+            </div>
+
+            <div class="device-access-grid">
+              <article class="device-card">
+                <div class="device-card-head">
+                  <strong>iPhone 使用入口</strong>
+                  <a id="iphone-open-link" class="button ghost compact" href="/auth" target="_blank" rel="noreferrer">打开链接</a>
+                </div>
+                <div class="device-link-box">
+                  <code id="iphone-link-text">读取中…</code>
+                  <button class="button subtle compact copy-link-button" type="button" data-copy-target="iphone-link-text">复制网址</button>
+                </div>
+                <ol class="device-steps">
+                  <li>用 Safari 打开这个网址</li>
+                  <li>点击分享按钮</li>
+                  <li>点击“添加到主屏幕”</li>
+                  <li>选择“Open as Web App”（如果系统显示）</li>
+                  <li>添加后即可像 App 一样打开使用</li>
+                </ol>
+              </article>
+
+              <article class="device-card">
+                <div class="device-card-head">
+                  <strong>iPad 使用入口</strong>
+                  <a id="ipad-open-link" class="button ghost compact" href="/auth" target="_blank" rel="noreferrer">打开链接</a>
+                </div>
+                <div class="device-link-box">
+                  <code id="ipad-link-text">读取中…</code>
+                  <button class="button subtle compact copy-link-button" type="button" data-copy-target="ipad-link-text">复制网址</button>
+                </div>
+                <ol class="device-steps">
+                  <li>用 Safari 打开这个网址</li>
+                  <li>点击分享按钮</li>
+                  <li>点击“添加到主屏幕”</li>
+                  <li>选择“Open as Web App”（如果系统显示）</li>
+                  <li>添加后即可像 App 一样打开使用</li>
+                </ol>
+              </article>
+
+              <article class="device-card device-card-android">
+                <div class="device-card-head">
+                  <strong>Android 安装入口</strong>
+                  <a id="android-download-link" class="button primary compact" href="/downloads/latest.apk">下载 APK</a>
+                </div>
+                <div class="device-link-box">
+                  <code id="android-link-text">读取中…</code>
+                  <button class="button subtle compact copy-link-button" type="button" data-copy-target="android-link-text">复制网址</button>
+                </div>
+                <p class="device-card-note">Android 继续用固定下载地址，下载安装后即可像普通 App 一样打开。</p>
+              </article>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="/auth.js"></script>
+  </body>
+</html>

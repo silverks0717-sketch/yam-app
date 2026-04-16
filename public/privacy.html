@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#f5d8b1" />
+    <title>YAM · 隐私说明</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/icon/yam-icon-192.png" />
+    <link rel="apple-touch-icon" href="/assets/icon/yam-apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="YAM" />
+  </head>
+  <body data-page="privacy">
+    <main class="policy-shell">
+      <section class="card policy-card">
+        <a class="brand-inline" href="/">
+          <img class="brand-icon" src="/assets/icon/yam-icon-192.png" alt="YAM 图标" />
+          <div>
+            <strong>YAM</strong>
+            <span>隐私说明</span>
+          </div>
+        </a>
+
+        <div class="policy-copy">
+          <h1>隐私说明</h1>
+          <p>
+            YAM 会保存你输入的饮食、训练、身体数据，以及登录所需的账号信息。当前阶段只处理这些最基本的数据，不做社交公开，不做广告投放，也不会把后台入口暴露给普通用户。
+          </p>
+          <p>
+            账号密码会以哈希方式存储；普通用户只能访问自己的记录；管理员会有总控后台权限，用于查看汇总数据、管理账号状态和导出单个用户数据。
+          </p>
+          <p>
+            如果你通过 Android 安装包使用，安装行为仍然需要你在手机上手动确认安装来源权限。后续如果接入更多同步、通知或运营能力，这里也会跟着更新。
+          </p>
+        </div>
+
+	        <div class="policy-actions">
+	          <a class="button primary" href="/auth?mode=user-register&switch=1">注册开始</a>
+	          <a class="button ghost" href="/install">下载 Android APK</a>
+	          <a class="button ghost" href="/">回到首页</a>
+	        </div>
+      </section>
+    </main>
+    <script type="module">
+      import { initPwa } from "/pwa.js";
+      initPwa();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#f5d8b1" />
+    <title>YAM</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/icon/yam-icon-192.png" />
+    <link rel="apple-touch-icon" href="/assets/icon/yam-apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="YAM" />
+  </head>
+  <body data-page="app">
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand-block">
+          <img id="brand-avatar" class="brand-icon avatar-icon" src="/assets/avatars/user-female.png" alt="用户头像" />
+          <div>
+            <h1>YAM</h1>
+            <p class="brand-copy">记录、趋势、回顾。</p>
+          </div>
+        </div>
+
+        <nav class="nav-list" aria-label="主导航">
+          <button class="nav-button active" data-tab="today" type="button">
+            <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5h10a2.5 2.5 0 0 1 2.5 2.5v12l-3.5-2.6-3.5 2.6-3.5-2.6L5.5 19V7A2.5 2.5 0 0 1 8 4.5"/></svg></span>
+            <span>今日</span>
+            <small>先看图</small>
+          </button>
+          <button class="nav-button" data-tab="records" type="button">
+            <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 12h15"/><path d="M8 8c1.1 0 2 .9 2 2v4"/><path d="M16 8a2 2 0 0 1 2 2v4"/><circle cx="12" cy="12" r="7.2"/></svg></span>
+            <span>记录</span>
+            <small>轻一点地记</small>
+          </button>
+          <button class="nav-button" data-tab="trends" type="button">
+            <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 16.5 9 11l3 3 7.5-8.5"/><path d="M18.5 5.5H20v1.5"/></svg></span>
+            <span>趋势</span>
+            <small>只留关键图</small>
+          </button>
+          <button class="nav-button" data-tab="review" type="button">
+            <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5.5v6l4 2.4"/><circle cx="12" cy="12" r="7"/></svg></span>
+            <span>双周回顾</span>
+            <small>短一点就够</small>
+          </button>
+        </nav>
+      </aside>
+
+      <main class="main-shell">
+        <header class="topbar">
+          <div class="topbar-copy-block">
+            <p class="kicker">YAM</p>
+            <h2 id="page-title">今日</h2>
+            <p id="page-subtitle" class="topbar-copy">打开先看趋势，再决定今天补哪一条。</p>
+          </div>
+
+          <div class="topbar-actions">
+            <div class="sync-stack">
+              <span id="sync-indicator" class="sync-indicator synced">已同步</span>
+              <small id="sync-hint" class="muted-text">云端同步已开启</small>
+            </div>
+            <div class="session-chip">
+              <div>
+                <strong id="session-user-name">已登录</strong>
+                <p id="session-user-meta" class="record-meta">云端同步已开启</p>
+              </div>
+            </div>
+            <a id="admin-link" class="button ghost" href="/admin" hidden>总控后台</a>
+            <a class="button ghost" href="/install">下载 APK</a>
+            <button class="button subtle export-excel-button" type="button">导出 Excel</button>
+            <button id="logout-button" class="button ghost" type="button">退出登录</button>
+          </div>
+        </header>
+
+        <div id="status-banner" class="status-banner" aria-live="polite"></div>
+
+        <section id="today" class="panel active">
+          <section class="hero-card">
+            <div class="hero-copy">
+              <p class="hero-kicker">每日一句</p>
+              <h3 id="daily-quote-cn" class="hero-quote"></h3>
+              <p id="daily-quote-en" class="hero-quote-sub"></p>
+              <div class="hero-actions">
+                <button class="button primary quick-record" type="button" data-record-view="meal">记饮食</button>
+                <button class="button soft quick-record" type="button" data-record-view="training">记训练</button>
+                <button class="button soft quick-record" type="button" data-record-view="body">记身体</button>
+                <button class="button subtle export-excel-button" type="button">导出 Excel</button>
+              </div>
+            </div>
+
+            <div class="hero-side">
+              <div id="today-status" class="status-grid"></div>
+            </div>
+          </section>
+
+          <section id="today-empty" class="empty-panel" hidden>
+            <p class="empty-title">这里还很空，但这不是问题。</p>
+            <p class="empty-copy">从今天的一顿饭、一场训练，或者一次体重记录开始就好。</p>
+          </section>
+
+          <div class="today-primary-grid">
+            <article class="card chart-card span-two">
+              <div class="card-head">
+                <h3>最近体重趋势</h3>
+              </div>
+              <div id="today-weight-chart" class="chart-shell tall"></div>
+            </article>
+
+            <article class="card chart-card span-two">
+              <div class="card-head">
+                <h3>最近腰围趋势</h3>
+              </div>
+              <div id="today-waist-chart" class="chart-shell tall"></div>
+            </article>
+          </div>
+
+          <div class="today-secondary-grid">
+            <article class="card chart-card horizontal-chart-card">
+              <div class="card-head">
+                <h3>近几周训练次数</h3>
+              </div>
+              <div id="today-training-chart" class="chart-shell"></div>
+            </article>
+
+            <article class="card chart-card horizontal-chart-card">
+              <div class="card-head">
+                <h3>近几周高热量日</h3>
+              </div>
+              <div id="today-high-calorie-chart" class="chart-shell"></div>
+            </article>
+
+            <article class="card chart-card horizontal-chart-card">
+              <div class="card-head">
+                <h3>近几周酒局次数</h3>
+              </div>
+              <div id="today-social-chart" class="chart-shell"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="records" class="panel">
+          <div class="panel-header">
+            <div>
+              <h3>记录</h3>
+              <p class="muted-text">不替你定义动作，也不逼你把一顿饭讲得太复杂。</p>
+            </div>
+
+            <div class="panel-actions">
+              <button class="button subtle export-excel-button" type="button">导出 Excel</button>
+            </div>
+          </div>
+
+          <div class="segmented" id="record-switch" aria-label="记录类型切换">
+            <button class="segmented-button active" data-record-view="meal" type="button">饮食</button>
+            <button class="segmented-button" data-record-view="training" type="button">训练</button>
+            <button class="segmented-button" data-record-view="body" type="button">身体</button>
+          </div>
+
+          <div class="record-view active" data-record-view="meal">
+            <div class="record-layout">
+              <article class="card form-card">
+                <div class="card-head">
+                  <h3 id="meal-form-title">新增饮食记录</h3>
+                </div>
+
+                <form id="meal-form" class="data-form">
+                  <div class="form-grid two">
+                    <label>
+                      <span>日期</span>
+                      <input name="date" type="date" required />
+                    </label>
+                    <label>
+                      <span>时间</span>
+                      <input name="time" type="time" required />
+                    </label>
+                  </div>
+
+                  <div class="form-grid two">
+                    <label>
+                      <span>餐别</span>
+                      <select name="mealType" required>
+                        <option value="早餐">早餐</option>
+                        <option value="午餐">午餐</option>
+                        <option value="晚餐">晚餐</option>
+                        <option value="加餐">加餐</option>
+                      </select>
+                    </label>
+                    <label>
+                      <span>份量（可选）</span>
+                      <input name="portion" type="text" maxlength="40" placeholder="1 份 / 半份 / 一碗" />
+                    </label>
+                  </div>
+
+                  <label>
+                    <span>食物名称</span>
+                    <input name="foodName" type="text" maxlength="80" placeholder="例如：鸡胸肉饭 + 西兰花" required />
+                  </label>
+
+                  <div class="toggle-grid">
+                    <label class="toggle-card">
+                      <input name="highCalorie" type="checkbox" />
+                      <span>高热量</span>
+                    </label>
+                    <label class="toggle-card">
+                      <input name="social" type="checkbox" />
+                      <span>应酬 / 喝酒</span>
+                    </label>
+                  </div>
+
+                  <label>
+                    <span>简短备注</span>
+                    <textarea name="note" rows="3" maxlength="160" placeholder="可选，留一点点就好"></textarea>
+                  </label>
+
+                  <div class="button-row">
+                    <button id="meal-submit" class="button primary" type="submit">保存饮食</button>
+                    <button id="meal-cancel" class="button ghost" type="button">取消编辑</button>
+                  </div>
+                </form>
+              </article>
+
+              <article class="card list-card">
+                <div class="list-toolbar">
+                  <div>
+                    <h3>最近饮食记录</h3>
+                    <span id="meal-count" class="count-pill"></span>
+                  </div>
+
+                  <div class="list-toolbar-actions">
+                    <button id="meal-select-toggle" class="button ghost" type="button">选择删除</button>
+                  </div>
+                </div>
+
+                <div id="meal-selection-bar" class="selection-bar" hidden>
+                  <span id="meal-selection-count">已选 0 条</span>
+                  <div class="selection-actions">
+                    <button id="meal-select-all" class="button ghost" type="button">全选</button>
+                    <button id="meal-delete-selected" class="button warn" type="button">批量删除</button>
+                  </div>
+                </div>
+
+                <div id="meal-list" class="record-list"></div>
+              </article>
+            </div>
+          </div>
+
+          <div class="record-view" data-record-view="training">
+            <div class="record-layout">
+              <article class="card form-card">
+                <div class="card-head">
+                  <h3 id="training-form-title">新增训练记录</h3>
+                </div>
+
+                <form id="training-form" class="data-form">
+                  <div class="form-grid two">
+                    <label>
+                      <span>日期</span>
+                      <input name="date" type="date" required />
+                    </label>
+                    <label>
+                      <span>时间</span>
+                      <input name="time" type="time" required />
+                    </label>
+                  </div>
+
+                  <div class="form-grid two">
+                    <label>
+                      <span>训练名称</span>
+                      <input name="trainingName" type="text" maxlength="80" placeholder="例如：腿部训练 / 慢跑 / 自由训练" required />
+                    </label>
+                    <label>
+                      <span>训练时长（分钟）</span>
+                      <input name="duration" type="number" min="0" max="300" placeholder="60" />
+                    </label>
+                  </div>
+
+                  <label>
+                    <span>动作内容</span>
+                    <textarea name="details" rows="4" maxlength="240" placeholder="自由填写，例如：深蹲 5 组；腿举 3 组；拉伸 10 分钟"></textarea>
+                  </label>
+
+                  <div class="form-grid three">
+                    <label>
+                      <span>重量（可选）</span>
+                      <input name="weight" type="number" step="0.1" min="0" placeholder="60" />
+                    </label>
+                    <label>
+                      <span>次数（可选）</span>
+                      <input name="reps" type="number" min="0" placeholder="8" />
+                    </label>
+                    <label>
+                      <span>组数（可选）</span>
+                      <input name="sets" type="number" min="0" placeholder="4" />
+                    </label>
+                  </div>
+
+                  <label>
+                    <span>简短备注</span>
+                    <textarea name="note" rows="3" maxlength="160" placeholder="例如：今天状态还行 / 时间有点赶"></textarea>
+                  </label>
+
+                  <div class="button-row">
+                    <button id="training-submit" class="button primary" type="submit">保存训练</button>
+                    <button id="training-cancel" class="button ghost" type="button">取消编辑</button>
+                  </div>
+                </form>
+              </article>
+
+              <article class="card list-card">
+                <div class="list-toolbar">
+                  <div>
+                    <h3>最近训练记录</h3>
+                    <span id="training-count" class="count-pill"></span>
+                  </div>
+
+                  <div class="list-toolbar-actions">
+                    <button id="training-select-toggle" class="button ghost" type="button">选择删除</button>
+                  </div>
+                </div>
+
+                <div id="training-selection-bar" class="selection-bar" hidden>
+                  <span id="training-selection-count">已选 0 条</span>
+                  <div class="selection-actions">
+                    <button id="training-select-all" class="button ghost" type="button">全选</button>
+                    <button id="training-delete-selected" class="button warn" type="button">批量删除</button>
+                  </div>
+                </div>
+
+                <div id="training-list" class="record-list"></div>
+              </article>
+            </div>
+          </div>
+
+          <div class="record-view" data-record-view="body">
+            <div class="record-layout">
+              <article class="card form-card">
+                <div class="card-head">
+                  <h3 id="body-form-title">新增身体记录</h3>
+                </div>
+
+                <form id="body-form" class="data-form">
+                  <label>
+                    <span>日期</span>
+                    <input name="date" type="date" required />
+                  </label>
+
+                  <div class="form-grid two">
+                    <label>
+                      <span>体重</span>
+                      <input name="weight" type="number" step="0.1" min="0" placeholder="69.8" />
+                    </label>
+                    <label>
+                      <span>腰围</span>
+                      <input name="waist" type="number" step="0.1" min="0" placeholder="83.4" />
+                    </label>
+                  </div>
+
+                  <div class="form-grid two">
+                    <label>
+                      <span>体脂率（可选）</span>
+                      <input name="bodyFat" type="number" step="0.1" min="0" placeholder="19.8" />
+                    </label>
+                    <label>
+                      <span>骨骼肌含量（可选）</span>
+                      <input name="boneMuscle" type="number" step="0.1" min="0" placeholder="26.4" />
+                    </label>
+                  </div>
+
+                  <div class="button-row">
+                    <button id="body-submit" class="button primary" type="submit">保存身体数据</button>
+                    <button id="body-cancel" class="button ghost" type="button">取消编辑</button>
+                  </div>
+                </form>
+              </article>
+
+              <article class="card list-card">
+                <div class="list-toolbar">
+                  <div>
+                    <h3>最近身体记录</h3>
+                    <span id="body-count" class="count-pill"></span>
+                  </div>
+
+                  <div class="list-toolbar-actions">
+                    <button id="body-select-toggle" class="button ghost" type="button">选择删除</button>
+                  </div>
+                </div>
+
+                <div id="body-selection-bar" class="selection-bar" hidden>
+                  <span id="body-selection-count">已选 0 条</span>
+                  <div class="selection-actions">
+                    <button id="body-select-all" class="button ghost" type="button">全选</button>
+                    <button id="body-delete-selected" class="button warn" type="button">批量删除</button>
+                  </div>
+                </div>
+
+                <div id="body-list" class="record-list"></div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section id="trends" class="panel">
+          <div class="panel-header">
+            <div>
+              <h3>趋势</h3>
+              <p class="muted-text">图比说明更重要，所以这里只留真正有用的变化。</p>
+            </div>
+
+            <div class="panel-actions">
+              <button class="button subtle export-excel-button" type="button">导出 Excel</button>
+            </div>
+          </div>
+
+          <div class="trend-primary-grid">
+            <article class="card chart-card span-two">
+              <div class="card-head">
+                <h3>体重趋势</h3>
+              </div>
+              <div id="trend-weight-chart" class="chart-shell tall"></div>
+            </article>
+
+            <article class="card chart-card span-two">
+              <div class="card-head">
+                <h3>腰围趋势</h3>
+              </div>
+              <div id="trend-waist-chart" class="chart-shell tall"></div>
+            </article>
+          </div>
+
+          <div class="trend-secondary-grid">
+            <article class="card chart-card">
+              <div class="card-head">
+                <h3>每周训练次数</h3>
+              </div>
+              <div id="trend-training-chart" class="chart-shell"></div>
+            </article>
+
+            <article class="card chart-card">
+              <div class="card-head">
+                <h3>高热量日趋势</h3>
+              </div>
+              <div id="trend-high-calorie-chart" class="chart-shell"></div>
+            </article>
+
+            <article class="card chart-card">
+              <div class="card-head">
+                <h3>酒局次数趋势</h3>
+              </div>
+              <div id="trend-social-chart" class="chart-shell"></div>
+            </article>
+
+            <article class="card chart-card">
+              <div class="card-head">
+                <h3>骨骼肌含量趋势</h3>
+              </div>
+              <div id="trend-bone-muscle-chart" class="chart-shell"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="review" class="panel">
+          <div class="panel-header">
+            <div>
+              <h3>双周回顾</h3>
+              <p class="muted-text">像一张复盘卡，不用写成长报告。</p>
+            </div>
+
+            <div class="panel-actions">
+              <button class="button subtle export-excel-button" type="button">导出 Excel</button>
+            </div>
+          </div>
+
+          <div class="review-grid">
+            <article class="card chart-card span-two">
+              <div class="card-head">
+                <h3>前一周 vs 这一周</h3>
+              </div>
+              <div id="review-compare-chart" class="chart-shell"></div>
+            </article>
+
+            <article class="card">
+              <div class="card-head">
+                <h3>最近两周</h3>
+              </div>
+              <div id="review-stats" class="review-stats"></div>
+            </article>
+          </div>
+
+          <div class="review-copy-grid">
+            <article class="card short-copy">
+              <p class="kicker">总结</p>
+              <p id="review-summary" class="review-copy"></p>
+            </article>
+
+            <article class="card short-copy">
+              <p class="kicker">提醒</p>
+              <p id="review-reminder" class="review-copy"></p>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="/vendor/xlsx.full.min.js"></script>
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

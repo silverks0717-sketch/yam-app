@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#f5d8b1" />
+    <title>YAM · 总控后台</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/icon/yam-icon-192.png" />
+    <link rel="apple-touch-icon" href="/assets/icon/yam-apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="YAM" />
+  </head>
+  <body data-page="admin">
+    <div class="admin-shell">
+      <aside class="admin-sidebar">
+        <a class="brand-inline" href="/app">
+          <img id="admin-brand-avatar" class="brand-icon avatar-icon" src="/assets/avatars/user-female.png" alt="管理员头像" />
+          <div>
+            <strong>YAM</strong>
+            <span>总控后台</span>
+          </div>
+        </a>
+
+        <div class="admin-sidebar-copy">
+          <p class="muted-text">这里给管理员看总览、用户明细和趋势，不会暴露给普通用户。</p>
+        </div>
+
+        <div class="admin-actions">
+          <a class="button ghost" href="/app">回到用户端</a>
+          <button id="admin-logout-button" class="button subtle" type="button">退出登录</button>
+        </div>
+      </aside>
+
+      <main class="admin-main">
+        <header class="topbar admin-topbar">
+          <div class="topbar-copy-block">
+            <p class="kicker">管理员视图</p>
+            <h1 class="admin-title">总控后台</h1>
+            <p class="topbar-copy">看总量、看活跃、看行为轨迹，把系统的真实使用状态收拢到一页里。</p>
+          </div>
+
+          <div class="topbar-actions">
+            <div class="session-chip">
+              <div>
+                <strong id="admin-user-name">管理员</strong>
+                <p id="admin-user-meta" class="record-meta">后台访问已开启</p>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div id="admin-message" class="status-banner" aria-live="polite"></div>
+
+        <section class="admin-grid">
+          <article class="card admin-overview-card">
+            <div class="card-head">
+              <h2>核心总览</h2>
+            </div>
+            <div id="admin-overview" class="overview-grid"></div>
+          </article>
+
+          <article class="card chart-card">
+            <div class="card-head">
+              <h2>最近 7 天记录趋势</h2>
+            </div>
+            <div id="admin-trend-chart" class="chart-shell"></div>
+          </article>
+        </section>
+
+        <section class="admin-grid admin-grid-secondary">
+          <article class="card">
+            <div class="card-head">
+              <h2>最近注册</h2>
+            </div>
+            <div id="admin-recent-users" class="admin-mini-list"></div>
+          </article>
+
+          <article class="card">
+            <div class="card-head">
+              <h2>最近活跃</h2>
+            </div>
+            <div id="admin-recent-active" class="admin-mini-list"></div>
+          </article>
+        </section>
+
+        <section class="admin-content-grid">
+          <article class="card">
+            <div class="list-toolbar">
+              <div>
+                <h2>用户列表</h2>
+                <p class="muted-text">按用户名或邮箱搜索，先看谁在活跃、谁刚改过数据。</p>
+              </div>
+            </div>
+
+            <form id="admin-search-form" class="admin-search-bar">
+              <input id="admin-search-input" type="search" placeholder="搜索用户名 / 邮箱" />
+              <button class="button primary" type="submit">搜索</button>
+            </form>
+
+            <div id="admin-user-list" class="record-list admin-user-list"></div>
+          </article>
+
+          <article class="card admin-detail-card">
+            <div id="admin-user-empty" class="empty-panel admin-empty-panel">
+              <p class="empty-title">先选一个用户。</p>
+              <p class="empty-copy">右侧会显示用户活跃趋势、记录明细、双周回顾和导出入口。</p>
+            </div>
+
+            <div id="admin-user-detail" hidden>
+              <div class="list-toolbar">
+                <div>
+                  <h2 id="detail-user-name">用户详情</h2>
+                  <p id="detail-user-meta" class="muted-text"></p>
+                </div>
+                <div class="panel-actions">
+                  <button id="detail-status-button" class="button ghost" type="button">冻结账号</button>
+                  <button id="detail-export-button" class="button subtle" type="button">导出 Excel</button>
+                </div>
+              </div>
+
+	              <div id="detail-user-stats" class="review-stats admin-stats"></div>
+
+              <div class="trend-grid admin-trend-grid">
+                <article class="card chart-card span-two">
+                  <div class="card-head">
+                    <h3>最近 30 天活跃度</h3>
+                  </div>
+                  <div id="detail-activity-chart" class="chart-shell"></div>
+                </article>
+                <article class="card chart-card">
+                  <div class="card-head">
+                    <h3>体重趋势</h3>
+                  </div>
+                  <div id="detail-weight-chart" class="chart-shell"></div>
+                </article>
+                <article class="card chart-card">
+                  <div class="card-head">
+                    <h3>腰围趋势</h3>
+                  </div>
+                  <div id="detail-waist-chart" class="chart-shell"></div>
+                </article>
+                <article class="card chart-card">
+                  <div class="card-head">
+                    <h3>训练频率</h3>
+                  </div>
+                  <div id="detail-training-chart" class="chart-shell"></div>
+                </article>
+                <article class="card chart-card">
+                  <div class="card-head">
+                    <h3>高热量日</h3>
+                  </div>
+                  <div id="detail-high-calorie-chart" class="chart-shell"></div>
+                </article>
+                <article class="card chart-card">
+                  <div class="card-head">
+                    <h3>酒局趋势</h3>
+                  </div>
+                  <div id="detail-social-chart" class="chart-shell"></div>
+                </article>
+              </div>
+
+		              <div class="review-copy-grid">
+	                <article class="card short-copy">
+	                  <p class="kicker">双周总结</p>
+	                  <p id="detail-review-summary" class="review-copy"></p>
+	                </article>
+	                <article class="card short-copy">
+	                  <p class="kicker">双周提醒</p>
+	                  <p id="detail-review-reminder" class="review-copy"></p>
+	                </article>
+		              </div>
+
+                <div class="trend-grid admin-trend-grid admin-record-grid">
+                  <article class="card">
+                    <div class="card-head">
+                      <h3>饮食原始记录</h3>
+                    </div>
+                    <div id="detail-meal-list" class="admin-mini-list"></div>
+                  </article>
+                  <article class="card">
+                    <div class="card-head">
+                      <h3>训练原始记录</h3>
+                    </div>
+                    <div id="detail-training-list" class="admin-mini-list"></div>
+                  </article>
+                  <article class="card">
+                    <div class="card-head">
+                      <h3>身体原始记录</h3>
+                    </div>
+                    <div id="detail-body-list" class="admin-mini-list"></div>
+                  </article>
+                </div>
+
+	                <article class="card admin-activity-card">
+                  <div class="card-head">
+                    <h3>最近行为</h3>
+                    <p class="record-meta">新增、修改、删除、登录</p>
+                  </div>
+                  <div id="detail-activity-list" class="activity-list"></div>
+                </article>
+	            </div>
+	          </article>
+	        </section>
+      </main>
+    </div>
+
+    <script type="module" src="/admin.js"></script>
+  </body>
+</html>
