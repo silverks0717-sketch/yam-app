@@ -90,6 +90,7 @@ function cacheElements() {
   elements.brandAvatar = byId("brand-avatar");
   elements.syncIndicator = byId("sync-indicator");
   elements.syncHint = byId("sync-hint");
+  elements.sessionAvatar = byId("session-avatar");
   elements.userName = byId("session-user-name");
   elements.userMeta = byId("session-user-meta");
   elements.adminLink = byId("admin-link");
@@ -296,11 +297,13 @@ function renderSession() {
 
   elements.brandAvatar.src = avatarForGender(user.gender);
   elements.brandAvatar.alt = `${labelForGender(user.gender)}用户头像`;
+  elements.sessionAvatar.src = avatarForGender(user.gender);
+  elements.sessionAvatar.alt = `${labelForGender(user.gender)}用户头像`;
   elements.userName.textContent = user.username || user.email || "已登录";
   elements.userMeta.textContent =
     user.role === "ADMIN"
-      ? `${labelForGender(user.gender)} · 管理员 · 云端同步已开启`
-      : `${labelForGender(user.gender)} · 云端同步已开启`;
+      ? `${labelForGender(user.gender)} · 管理员`
+      : state.data.profile?.subtitle || `${labelForGender(user.gender)} · 云端同步已开启`;
   elements.adminLink.hidden = user.role !== "ADMIN";
   hydrateProfileForm();
 }

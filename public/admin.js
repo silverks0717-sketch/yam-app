@@ -44,6 +44,7 @@ function cacheElements() {
   elements.adminName = byId("admin-user-name");
   elements.adminMeta = byId("admin-user-meta");
   elements.brandAvatar = byId("admin-brand-avatar");
+  elements.sessionAvatar = byId("admin-session-avatar");
   elements.message = byId("admin-message");
   elements.overview = byId("admin-overview");
   elements.trendChart = byId("admin-trend-chart");
@@ -155,6 +156,8 @@ function renderSession() {
   const user = state.sessionUser || getCurrentUser();
   elements.brandAvatar.src = avatarForGender(user?.gender);
   elements.brandAvatar.alt = `${labelForGender(user?.gender)}管理员头像`;
+  elements.sessionAvatar.src = avatarForGender(user?.gender);
+  elements.sessionAvatar.alt = `${labelForGender(user?.gender)}管理员头像`;
   elements.adminName.textContent = user?.username || "管理员";
   elements.adminMeta.textContent = user?.email || `${labelForGender(user?.gender)} · 后台访问已开启`;
 }

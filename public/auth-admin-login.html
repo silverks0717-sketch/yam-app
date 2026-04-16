@@ -34,7 +34,7 @@
           </div>
         </a>
 
-        <div class="identity-stack">
+        <div class="identity-stack identity-stack-auth">
           <section class="identity-card">
             <div class="identity-copy">
               <p id="auth-kicker" class="kicker">管理员登录</p>
@@ -55,64 +55,6 @@
               </label>
               <button class="button primary auth-submit" type="submit">进入总控后台</button>
             </form>
-          </section>
-
-          <section class="device-access-panel" aria-label="多端入口">
-            <div class="device-access-head">
-              <p class="kicker">iPhone · iPad · Android</p>
-              <h2>后台只做后台，设备入口保持清楚。</h2>
-              <p class="device-access-copy">管理员登录页不再混入用户注册和用户登录表单，入口只保留当前这一路。</p>
-            </div>
-
-            <div class="device-access-grid">
-              <article class="device-card">
-                <div class="device-card-head">
-                  <strong>iPhone 使用入口</strong>
-                  <a id="iphone-open-link" class="button ghost compact" href="/auth/user-login" target="_blank" rel="noreferrer">打开链接</a>
-                </div>
-                <div class="device-link-box">
-                  <code id="iphone-link-text">读取中…</code>
-                  <button class="button subtle compact copy-link-button" type="button" data-copy-target="iphone-link-text">复制网址</button>
-                </div>
-                <ol class="device-steps">
-                  <li>用 Safari 打开这个网址</li>
-                  <li>点击分享按钮</li>
-                  <li>点击“添加到主屏幕”</li>
-                  <li>选择“Open as Web App”（如果系统显示）</li>
-                  <li>添加后即可像 App 一样打开使用</li>
-                </ol>
-              </article>
-
-              <article class="device-card">
-                <div class="device-card-head">
-                  <strong>iPad 使用入口</strong>
-                  <a id="ipad-open-link" class="button ghost compact" href="/auth/user-login" target="_blank" rel="noreferrer">打开链接</a>
-                </div>
-                <div class="device-link-box">
-                  <code id="ipad-link-text">读取中…</code>
-                  <button class="button subtle compact copy-link-button" type="button" data-copy-target="ipad-link-text">复制网址</button>
-                </div>
-                <ol class="device-steps">
-                  <li>用 Safari 打开这个网址</li>
-                  <li>点击分享按钮</li>
-                  <li>点击“添加到主屏幕”</li>
-                  <li>选择“Open as Web App”（如果系统显示）</li>
-                  <li>添加后即可像 App 一样打开使用</li>
-                </ol>
-              </article>
-
-              <article class="device-card device-card-android">
-                <div class="device-card-head">
-                  <strong>Android 安装入口</strong>
-                  <a id="android-download-link" class="button primary compact" href="/downloads/latest.apk">下载 APK</a>
-                </div>
-                <div class="device-link-box">
-                  <code id="android-link-text">读取中…</code>
-                  <button class="button subtle compact copy-link-button" type="button" data-copy-target="android-link-text">复制网址</button>
-                </div>
-                <p class="device-card-note">Android 继续用固定下载地址，下载安装后即可像普通 App 一样打开。</p>
-              </article>
-            </div>
           </section>
         </div>
       </section>

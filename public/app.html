@@ -61,15 +61,14 @@
 	              <span id="sync-indicator" class="sync-indicator synced">已同步</span>
 	              <small id="sync-hint" class="muted-text">云端同步已开启</small>
 	            </div>
-            <div class="session-chip">
-              <div>
-	                <strong id="session-user-name">已登录</strong>
-	                <p id="session-user-meta" class="record-meta">云端同步已开启</p>
-	              </div>
-	            </div>
-	            <button id="profile-open-button" class="button ghost" type="button">个人信息</button>
+	            <button id="profile-open-button" class="session-chip session-chip-button" type="button" aria-label="打开个人信息">
+                <img id="session-avatar" class="session-avatar" src="/assets/avatars/user-female.png" alt="当前用户头像" />
+	              <div class="session-copy">
+		                <strong id="session-user-name">已登录</strong>
+		                <p id="session-user-meta" class="record-meta">云端同步已开启</p>
+		              </div>
+		            </button>
 	            <a id="admin-link" class="button ghost" href="/admin" hidden>总控后台</a>
-	            <a class="button ghost" href="/install">下载 APK</a>
 	            <button class="button subtle export-excel-button" type="button">导出 Excel</button>
 	            <button id="logout-button" class="button ghost" type="button">退出登录</button>
           </div>

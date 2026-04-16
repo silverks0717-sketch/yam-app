@@ -22,14 +22,14 @@ const userRegisterSchema = z.object({
   username: z.string().trim().min(3).max(40),
   email: z.string().trim().email().max(160).optional().or(z.literal("")),
   password: z.string().min(8).max(72),
-  gender: z.enum(USER_GENDERS).optional().default("FEMALE"),
+  gender: z.enum(USER_GENDERS),
 });
 
 const adminRegisterSchema = z.object({
   username: z.string().trim().min(3).max(40),
   email: z.string().trim().email().max(160).optional().or(z.literal("")),
   password: z.string().min(8).max(72),
-  gender: z.enum(USER_GENDERS).optional().default("FEMALE"),
+  gender: z.enum(USER_GENDERS),
   adminKey: z.string().trim().length(8),
 });
 

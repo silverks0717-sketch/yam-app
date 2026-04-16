@@ -59,7 +59,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   bindEvents();
   renderCopy();
   renderQuote();
-  await hydrateDeviceAccess();
 });
 
 function cacheElements() {
@@ -68,22 +67,10 @@ function cacheElements() {
   elements.title = byId("auth-title");
   elements.quote = byId("auth-quote");
   elements.form = byId("auth-form");
-  elements.copyButtons = Array.from(document.querySelectorAll(".copy-link-button"));
-  elements.deviceLinks = {
-    iphone: byId("iphone-link-text"),
-    ipad: byId("ipad-link-text"),
-    android: byId("android-link-text"),
-    iphoneOpen: byId("iphone-open-link"),
-    ipadOpen: byId("ipad-open-link"),
-    androidDownload: byId("android-download-link"),
-  };
 }
 
 function bindEvents() {
   elements.form.addEventListener("submit", handleSubmit);
-  elements.copyButtons.forEach((button) => {
-    button.addEventListener("click", () => copyLink(button.dataset.copyTarget));
-  });
 }
 
 function renderCopy() {
@@ -117,11 +104,15 @@ async function handleSubmit(event) {
     }
 
     if (currentMode === "user-register") {
+      const gender = form.querySelector("input[name='gender']:checked")?.value;
+      if (!gender) {
+        throw new Error("请选择用户性别");
+      }
       await register({
         username: form.username.value.trim(),
         password: form.password.value,
         email: "",
-        gender: "FEMALE",
+        gender,
       });
       showMessage("用户账号创建完成。", "success");
       window.location.href = resolveNextPath("/app");
@@ -138,11 +129,15 @@ async function handleSubmit(event) {
       return;
     }
 
+    const gender = form.querySelector("input[name='gender']:checked")?.value;
+    if (!gender) {
+      throw new Error("请选择管理员性别");
+    }
     await submitJson("/api/auth/admin/register", {
       username: form.username.value.trim(),
       password: form.password.value,
       email: "",
-      gender: "FEMALE",
+      gender,
       adminKey: form.adminKey.value.trim(),
     });
     showMessage("管理员账号创建完成。", "success");
@@ -167,49 +162,6 @@ async function tryRestoreSession() {
 function redirectAuthenticatedUser(user) {
   const target = user?.role === "ADMIN" ? "/admin" : "/app";
   window.location.replace(resolveNextPath(target));
-}
-
-async function hydrateDeviceAccess() {
-  const fallbackOrigin = window.location.origin;
-  let publicOrigin = fallbackOrigin;
-  let downloadUrl = "/downloads/latest.apk";
-
-  try {
-    const response = await fetch("/api/public/release", { cache: "no-store" });
-    if (response.ok) {
-      const payload = await response.json();
-      publicOrigin = payload.release?.publicOrigin || fallbackOrigin;
-      downloadUrl = payload.release?.downloadUrl || downloadUrl;
-    }
-  } catch {
-    publicOrigin = fallbackOrigin;
-  }
-
-  const authUrl = new URL("/auth/user-login", publicOrigin).toString();
-  const apkUrl = new URL(downloadUrl, publicOrigin).toString();
-
-  elements.deviceLinks.iphone.textContent = authUrl;
-  elements.deviceLinks.ipad.textContent = authUrl;
-  elements.deviceLinks.android.textContent = apkUrl;
-  elements.deviceLinks.iphoneOpen.href = authUrl;
-  elements.deviceLinks.ipadOpen.href = authUrl;
-  elements.deviceLinks.androidDownload.href = apkUrl;
-}
-
-async function copyLink(targetId) {
-  const target = byId(targetId);
-  const value = target.textContent?.trim();
-  if (!value || value === "读取中…") {
-    showMessage("链接还没准备好，请稍后再试。", "error");
-    return;
-  }
-
-  try {
-    await navigator.clipboard.writeText(value);
-    showMessage("网址已复制。");
-  } catch {
-    showMessage("复制失败，请手动复制。", "error");
-  }
 }
 
 function showMessage(text, tone = "success") {
