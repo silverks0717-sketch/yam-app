@@ -2,6 +2,7 @@ const ACCESS_TOKEN_KEY = "yam-access-token";
 const REFRESH_TOKEN_KEY = "yam-refresh-token";
 const USER_KEY = "yam-session-user";
 const SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 7;
+const DEFAULT_REMOTE_ORIGIN = "https://yam-web.onrender.com";
 
 export function getSession() {
   return {
@@ -87,7 +88,7 @@ export async function fetchCurrentUser() {
 }
 
 export async function register(values) {
-  const response = await fetch("/api/auth/register", {
+  const response = await fetch(resolveApiUrl("/api/auth/register"), {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -99,7 +100,7 @@ export async function register(values) {
 }
 
 export async function login(values) {
-  const response = await fetch("/api/auth/login", {
+  const response = await fetch(resolveApiUrl("/api/auth/login"), {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -115,7 +116,7 @@ export async function logout() {
 
   try {
     if (refreshToken) {
-      await fetch("/api/auth/logout", {
+      await fetch(resolveApiUrl("/api/auth/logout"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -156,7 +157,7 @@ export async function apiFetch(url, options = {}, allowRetry = true) {
     headers.set("Authorization", `Bearer ${session.accessToken}`);
   }
 
-  const response = await fetch(url, {
+  const response = await fetch(resolveApiUrl(url), {
     ...options,
     headers,
   });
@@ -176,7 +177,7 @@ export async function apiFetch(url, options = {}, allowRetry = true) {
 
 async function refreshAccessToken(refreshToken) {
   try {
-    const response = await fetch("/api/auth/refresh", {
+    const response = await fetch(resolveApiUrl("/api/auth/refresh"), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -226,6 +227,22 @@ function resolveAuthPath(mode) {
   };
 
   return routes[mode] || routes["user-login"];
+}
+
+function resolveApiUrl(path) {
+  if (!path) return path;
+  if (/^https?:\/\//i.test(path)) return path;
+
+  const base = resolveApiBase();
+  return `${base}${path}`;
+}
+
+function resolveApiBase() {
+  if (window?.Capacitor?.isNativePlatform?.()) {
+    return window.__YAM_PUBLIC_ORIGIN__ || DEFAULT_REMOTE_ORIGIN;
+  }
+
+  return "";
 }
 
 function writeCookie(name, value) {

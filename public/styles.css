@@ -1,9 +1,14 @@
 :root {
-  --font-display: ui-rounded, "SF Pro Rounded", "SF Pro Display", "Avenir Next", "PingFang SC", "Hiragino Sans GB", sans-serif;
-  --font-body: ui-rounded, "SF Pro Text", "PingFang SC", "Hiragino Sans GB", "Helvetica Neue", sans-serif;
-  --tracking-tight: -0.035em;
-  --tracking-base: 0.008em;
-  --tracking-relaxed: 0.016em;
+  --font-display: "Avenir Next Rounded", ui-rounded, "SF Pro Rounded", "Nunito", "HarmonyOS Sans SC", "PingFang SC", "Hiragino Sans GB", sans-serif;
+  --font-body: "Avenir Next", ui-rounded, "SF Pro Rounded", "SF Pro Text", "HarmonyOS Sans SC", "PingFang SC", "Hiragino Sans GB", "Helvetica Neue", sans-serif;
+  --tracking-tight: -0.028em;
+  --tracking-base: 0.014em;
+  --tracking-relaxed: 0.022em;
+  --weight-display: 620;
+  --weight-title: 560;
+  --weight-label: 520;
+  --weight-body: 450;
+  --weight-emphasis: 540;
   --bg: #f6f1ef;
   --bg-soft: #fbf7f4;
   --card: rgba(255, 255, 255, 0.92);
@@ -47,6 +52,8 @@ body {
     radial-gradient(circle at bottom center, rgba(241, 213, 222, 0.7), transparent 22%),
     linear-gradient(180deg, #fbf7f4 0%, #f6f1ef 100%);
   font-family: var(--font-body);
+  font-weight: var(--weight-body);
+  line-height: 1.58;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   letter-spacing: var(--tracking-base);
@@ -183,11 +190,12 @@ svg {
 .panel-header h3 {
   margin: 0;
   letter-spacing: var(--tracking-tight);
+  font-weight: var(--weight-display);
 }
 
 .brand-block h1 {
   font-size: 1.24rem;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
 }
 
 .brand-copy,
@@ -236,7 +244,7 @@ svg {
 }
 
 .nav-button span {
-  font-weight: 650;
+  font-weight: var(--weight-title);
   color: var(--text);
 }
 
@@ -271,6 +279,7 @@ svg {
   color: var(--text-mute);
   letter-spacing: 0.12em;
   text-transform: uppercase;
+  font-weight: var(--weight-label);
 }
 
 .topbar h2 {
@@ -398,7 +407,7 @@ svg {
   padding: 0.28rem 0.68rem;
   border-radius: 999px;
   font-size: 0.82rem;
-  font-weight: 600;
+  font-weight: var(--weight-label);
   background: rgba(126, 75, 104, 0.08);
   color: var(--berry);
 }
@@ -442,6 +451,7 @@ svg {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   font-size: 0.78rem;
+  font-weight: var(--weight-label);
 }
 
 .hero-quote {
@@ -485,6 +495,8 @@ svg {
   display: block;
   margin: 12px 0 6px;
   font-size: 1.12rem;
+  font-weight: var(--weight-emphasis);
+  letter-spacing: -0.014em;
 }
 
 .status-pill {
@@ -508,7 +520,7 @@ svg {
   border: 1px solid transparent;
   border-radius: 999px;
   padding: 0.82rem 1.18rem;
-  font-weight: 600;
+  font-weight: var(--weight-title);
   transition: transform 0.1s ease, border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
 }
 
@@ -865,6 +877,8 @@ svg {
 .record-title {
   margin: 0;
   font-size: 1rem;
+  font-weight: var(--weight-title);
+  letter-spacing: -0.01em;
 }
 
 .user-card-meta {
@@ -902,8 +916,8 @@ svg {
   display: block;
   margin-top: 8px;
   font-size: 1.02rem;
-  font-weight: 560;
-  letter-spacing: -0.02em;
+  font-weight: 500;
+  letter-spacing: -0.012em;
 }
 
 .review-copy {
@@ -926,20 +940,32 @@ svg {
   fill: #a7948f;
   font-size: 12px;
   font-family: inherit;
+  font-weight: 440;
+  letter-spacing: 0.012em;
 }
 
 .chart-value {
   fill: #4c3633;
   font-size: 12px;
-  font-weight: 520;
+  font-weight: 500;
   font-family: inherit;
+  letter-spacing: -0.012em;
 }
 
 .chart-value-soft {
   fill: #67504b;
   font-size: 11px;
-  font-weight: 480;
+  font-weight: 460;
   font-family: inherit;
+  letter-spacing: -0.008em;
+}
+
+.chart-label-soft {
+  fill: #8c7b76;
+  font-size: 11px;
+  font-weight: 410;
+  font-family: inherit;
+  letter-spacing: 0.016em;
 }
 
 .marketing-shell,
@@ -1328,8 +1354,9 @@ body.intro-actions-ready .hero-entry-grid {
 .identity-copy h1 {
   margin: 0;
   font-size: clamp(2rem, 5vw, 3rem);
-  letter-spacing: -0.05em;
+  letter-spacing: -0.032em;
   color: #fff;
+  font-weight: 640;
 }
 
 .identity-quote {
@@ -1409,7 +1436,8 @@ body.intro-actions-ready .hero-entry-grid {
 .device-card-head strong {
   color: rgba(255, 250, 246, 0.96);
   font-size: 1rem;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.012em;
+  font-weight: var(--weight-title);
 }
 
 .device-link-box {
@@ -1696,6 +1724,7 @@ body[data-page="admin"][data-form-factor="tablet"] .session-chip {
   margin: 0;
   font-size: 1.5rem;
   letter-spacing: -0.04em;
+  font-weight: var(--weight-display);
 }
 
 .profile-form {
@@ -2246,7 +2275,24 @@ body.update-gate-open {
   padding: 0.44rem 0.84rem;
   border-radius: 999px;
   font-size: 0.82rem;
-  font-weight: 700;
+  font-weight: var(--weight-title);
+}
+
+body[data-form-factor="desktop"] {
+  font-size: 16px;
+  letter-spacing: 0.014em;
+}
+
+body[data-form-factor="tablet"] {
+  font-size: 15.8px;
+  letter-spacing: 0.015em;
+  line-height: 1.62;
+}
+
+body[data-form-factor="mobile"] {
+  font-size: 15.45px;
+  letter-spacing: 0.016em;
+  line-height: 1.64;
 }
 
 .activity-badge.create {

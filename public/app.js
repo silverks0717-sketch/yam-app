@@ -420,6 +420,7 @@ function renderReview(model) {
     barColor: "#f3d5c2",
     accentColor: "#87546d",
     valueClassName: "chart-value-soft",
+    labelClassName: "chart-label-soft",
   });
 }
 
