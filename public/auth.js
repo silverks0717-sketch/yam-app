@@ -1,4 +1,4 @@
-import { clearSession, fetchCurrentUser, login, register, saveSession } from "./api-client.js";
+import { clearSession, fetchCurrentUser, login, register, requestJson } from "./api-client.js";
 import { APP_NAME } from "./data-model.js";
 import { initPwa } from "./pwa.js";
 import { getDailyQuote } from "./quotes.js";
@@ -120,7 +120,7 @@ async function handleSubmit(event) {
     }
 
     if (currentMode === "admin-login") {
-      await submitJson("/api/auth/admin/login", {
+      await requestJson("/api/auth/admin/login", {
         identifier: form.identifier.value.trim(),
         password: form.password.value,
       });
@@ -133,7 +133,7 @@ async function handleSubmit(event) {
     if (!gender) {
       throw new Error("请选择管理员性别");
     }
-    await submitJson("/api/auth/admin/register", {
+    await requestJson("/api/auth/admin/register", {
       username: form.username.value.trim(),
       password: form.password.value,
       email: "",
@@ -177,24 +177,6 @@ function resolvePageMode() {
 function resolveNextPath(fallback) {
   const params = new URLSearchParams(window.location.search);
   return params.get("next") || fallback;
-}
-
-async function submitJson(url, payload) {
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
-
-  const data = await response.json().catch(() => ({}));
-  if (!response.ok) {
-    throw new Error(data.error || "请求失败");
-  }
-
-  saveSession(data);
-  return data;
 }
 
 function byId(id) {

@@ -248,6 +248,43 @@ router.patch("/api/admin/users/:id/status", async (request, response, next) => {
   }
 });
 
+router.post("/api/admin/system/reset", async (request, response, next) => {
+  try {
+    if (String(request.body.confirm || "") !== "RESET_YAM_DATA") {
+      response.status(400).json({ error: "请确认清空指令" });
+      return;
+    }
+
+    const [activityLogs, adminLogs, exports, sessions, meals, trainings, bodyMetrics, users] =
+      await prisma.$transaction([
+        prisma.activityLog.deleteMany({}),
+        prisma.adminLog.deleteMany({}),
+        prisma.export.deleteMany({}),
+        prisma.userSession.deleteMany({}),
+        prisma.meal.deleteMany({}),
+        prisma.training.deleteMany({}),
+        prisma.bodyMetric.deleteMany({}),
+        prisma.user.deleteMany({}),
+      ]);
+
+    response.json({
+      ok: true,
+      cleared: {
+        activityLogs: activityLogs.count,
+        adminLogs: adminLogs.count,
+        exports: exports.count,
+        sessions: sessions.count,
+        meals: meals.count,
+        trainings: trainings.count,
+        bodyMetrics: bodyMetrics.count,
+        users: users.count,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.get("/api/admin/users/:id/export", async (request, response, next) => {
   try {
     const user = await prisma.user.findUnique({

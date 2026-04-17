@@ -88,27 +88,23 @@ export async function fetchCurrentUser() {
 }
 
 export async function register(values) {
-  const response = await fetch(resolveApiUrl("/api/auth/register"), {
+  return requestJson("/api/auth/register", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(values),
   });
-
-  return handleAuthResponse(response);
 }
 
 export async function login(values) {
-  const response = await fetch(resolveApiUrl("/api/auth/login"), {
+  return requestJson("/api/auth/login", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(values),
   });
-
-  return handleAuthResponse(response);
 }
 
 export async function logout() {
@@ -207,6 +203,15 @@ async function handleAuthResponse(response) {
   return payload;
 }
 
+export async function requestJson(url, options = {}) {
+  try {
+    const response = await fetch(resolveApiUrl(url), options);
+    return handleAuthResponse(response);
+  } catch (error) {
+    throw normalizeRequestError(error);
+  }
+}
+
 function readStoredUser() {
   const raw = window.localStorage.getItem(USER_KEY);
   if (!raw) return null;
@@ -237,12 +242,31 @@ function resolveApiUrl(path) {
   return `${base}${path}`;
 }
 
+export { resolveApiUrl };
+
 function resolveApiBase() {
   if (window?.Capacitor?.isNativePlatform?.()) {
     return window.__YAM_PUBLIC_ORIGIN__ || DEFAULT_REMOTE_ORIGIN;
   }
 
-  return "";
+  if (/^https?:$/i.test(window.location.protocol)) {
+    return window.location.origin;
+  }
+
+  return window.__YAM_PUBLIC_ORIGIN__ || DEFAULT_REMOTE_ORIGIN;
+}
+
+function normalizeRequestError(error) {
+  if (!error) {
+    return new Error("请求失败，请稍后再试");
+  }
+
+  const message = String(error.message || "").toLowerCase();
+  if (message.includes("load failed") || message.includes("failed to fetch") || message.includes("networkerror")) {
+    return new Error("连接服务器失败，请检查网络后再试");
+  }
+
+  return error instanceof Error ? error : new Error("请求失败，请稍后再试");
 }
 
 function writeCookie(name, value) {
