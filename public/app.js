@@ -12,6 +12,7 @@ import {
 import { avatarForGender, labelForGender } from "./avatar-utils.js";
 import { renderAreaChart, renderBarChart, renderLineChart } from "./charts.js";
 import { createEmptyData, normalizeData } from "./data-model.js";
+import { renderEmptyStateMarkup } from "./empty-state.js";
 import { APP_VERSION } from "./generated-version.js";
 import { getDailyQuote } from "./quotes.js";
 import { getCurrentUser, logout, requireUserSession, saveSession, updateCurrentUserProfile } from "./api-client.js";
@@ -45,6 +46,7 @@ const state = {
     activeTab: "today",
     recordView: "meal",
     profileOpen: false,
+    topbarMenuOpen: false,
     editing: {
       mealId: null,
       trainingId: null,
@@ -93,6 +95,11 @@ function cacheElements() {
   elements.sessionAvatar = byId("session-avatar");
   elements.userName = byId("session-user-name");
   elements.userMeta = byId("session-user-meta");
+  elements.topbarMenu = {
+    shell: byId("topbar-menu-shell"),
+    button: byId("topbar-menu-button"),
+    panel: byId("topbar-menu"),
+  };
   elements.adminLink = byId("admin-link");
   elements.logoutButton = byId("logout-button");
   elements.profile = {
@@ -210,12 +217,15 @@ function bindEvents() {
 
   bindSelectionControls("meals", elements.meal);
   bindSelectionControls("trainings", elements.training);
+  elements.topbarMenu.button.addEventListener("click", toggleTopbarMenu);
+  elements.topbarMenu.panel.addEventListener("click", handleTopbarMenuAction);
   elements.logoutButton.addEventListener("click", handleLogout);
   elements.profile.openButton.addEventListener("click", openProfileSheet);
   elements.profile.closeButton.addEventListener("click", closeProfileSheet);
   elements.profile.cancelButton.addEventListener("click", closeProfileSheet);
   elements.profile.backdrop.addEventListener("click", closeProfileSheet);
   elements.profile.form.addEventListener("submit", handleProfileSubmit);
+  document.addEventListener("click", handleDocumentClick);
   window.addEventListener("yam:sync-status", handleSyncStatus);
   window.addEventListener("keydown", handleGlobalKeydown);
 }
@@ -276,6 +286,7 @@ function updateTopbar() {
   const meta = PAGE_META[state.ui.activeTab];
   elements.pageTitle.textContent = meta.title;
   elements.pageSubtitle.textContent = `${meta.subtitle}${state.data.meta.updatedAt ? ` 上次保存 ${formatDateTime(state.data.meta.updatedAt)}` : ""}`;
+  setTopbarMenuOpen(false);
 
   elements.navButtons.forEach((button) => {
     button.classList.toggle("active", button.dataset.tab === state.ui.activeTab);
@@ -289,16 +300,15 @@ function updateTopbar() {
 function renderSession() {
   const user = state.sessionUser || getCurrentUser();
   if (!user) return;
+  const greeting = greetingForNow();
 
   elements.brandAvatar.src = avatarForGender(user.gender);
   elements.brandAvatar.alt = `${labelForGender(user.gender)}用户头像`;
   elements.sessionAvatar.src = avatarForGender(user.gender);
   elements.sessionAvatar.alt = `${labelForGender(user.gender)}用户头像`;
-  elements.userName.textContent = user.username || user.email || "已登录";
+  elements.userName.textContent = user.username ? `${greeting}，${user.username}` : greeting;
   elements.userMeta.textContent =
-    user.role === "ADMIN"
-      ? `${labelForGender(user.gender)} · 管理员`
-      : state.data.profile?.subtitle || `${labelForGender(user.gender)} · 云端同步已开启`;
+    user.role === "ADMIN" ? `${labelForGender(user.gender)} · 管理员` : state.data.profile?.subtitle || "点这里管理个人信息";
   elements.adminLink.hidden = user.role !== "ADMIN";
   hydrateProfileForm();
 }
@@ -313,10 +323,13 @@ function renderToday(model) {
   elements.today.status.innerHTML = model.today.statusCards
     .map(
       (item) => `
-        <article class="status-card">
-          <span class="status-pill ${item.tone}">${escapeHtml(item.value)}</span>
-          <strong>${escapeHtml(item.label)}</strong>
-          <p class="record-meta">${escapeHtml(item.detail)}</p>
+        <article class="status-card status-card-${item.tone}">
+          <p class="status-label">${escapeHtml(item.label)}</p>
+          <div class="metric-inline">
+            <strong class="metric-value">${escapeHtml(item.value)}</strong>
+            <span class="metric-unit">${escapeHtml(item.unit || "")}</span>
+          </div>
+          <p class="status-detail ${item.tone}">${escapeHtml(item.detail)}</p>
         </article>
       `
     )
@@ -325,72 +338,107 @@ function renderToday(model) {
   elements.today.empty.hidden = model.hasAnyData;
 
   renderAreaChart(elements.today.weightChart, model.today.charts.weightTrend, {
-    lineColor: "#ffdfc7",
-    dotColor: "#fff7f4",
-    fillColor: "rgba(255, 236, 220, 0.82)",
+    lineColor: "#0ea5e9",
+    dotColor: "#ffffff",
+    fillColor: "rgba(14, 165, 233, 0.18)",
     yFormatter: (value) => `${value.toFixed(1)}kg`,
   });
 
   renderLineChart(elements.today.waistChart, model.today.charts.waistTrend, {
-    lineColor: "#f4c6b1",
-    dotColor: "#fff7f4",
+    lineColor: "#14b8a6",
+    dotColor: "#ffffff",
     yFormatter: (value) => `${value.toFixed(1)}cm`,
   });
 
   renderBarChart(elements.today.trainingChart, model.today.charts.weeklyTrainingTrend, {
     height: 236,
-    barColor: "#f4d7c2",
-    accentColor: "#8f5c72",
+    barColor: "#bae6fd",
+    accentColor: "#0ea5e9",
   });
 
   renderBarChart(elements.today.highCalorieChart, model.today.charts.weeklyHighCalorieTrend, {
     height: 236,
-    barColor: "#f9e4bf",
-    accentColor: "#d6944a",
+    barColor: "#fde68a",
+    accentColor: "#f59e0b",
   });
 
   renderBarChart(elements.today.socialChart, model.today.charts.weeklySocialTrend, {
     height: 236,
-    barColor: "#efd3dc",
-    accentColor: "#8e5d77",
+    barColor: "#99f6e4",
+    accentColor: "#14b8a6",
   });
 }
 
 function renderTrends(model) {
   renderAreaChart(elements.trends.weightChart, model.weightTrend, {
-    lineColor: "#d28b63",
-    dotColor: "#fef7f2",
-    fillColor: "rgba(250, 221, 198, 0.62)",
+    height: 428,
+    lineColor: "#0ea5e9",
+    lineWidth: 3,
+    dotColor: "#0ea5e9",
+    smooth: true,
+    fillFrom: "rgba(14, 165, 233, 0.26)",
+    fillTo: "rgba(14, 165, 233, 0.02)",
+    gridLines: 3,
+    tooltipLabel: "体重",
+    tooltipFormatter: (value) => `${value.toFixed(1)}kg`,
     yFormatter: (value) => `${value.toFixed(1)}kg`,
   });
 
-  renderLineChart(elements.trends.waistChart, model.waistTrend, {
-    lineColor: "#9d5f78",
-    dotColor: "#fef7f2",
+  renderAreaChart(elements.trends.waistChart, model.waistTrend, {
+    height: 248,
+    lineColor: "#14b8a6",
+    lineWidth: 2.8,
+    dotColor: "#14b8a6",
+    smooth: true,
+    fillFrom: "rgba(20, 184, 166, 0.2)",
+    fillTo: "rgba(20, 184, 166, 0.02)",
+    gridLines: 2,
+    tooltipLabel: "腰围",
+    tooltipFormatter: (value) => `${value.toFixed(1)}cm`,
     yFormatter: (value) => `${value.toFixed(1)}cm`,
   });
 
   renderBarChart(elements.trends.trainingChart, model.weeklyTrainingTrend, {
-    height: 246,
-    barColor: "#f3d3c1",
-    accentColor: "#8f5c72",
+    height: 220,
+    barColor: "#bae6fd",
+    accentColor: "#0ea5e9",
+    gridLines: 2,
+    showValues: false,
+    tooltipLabel: "训练次数",
+    tooltipFormatter: (value) => `${value} 次`,
   });
 
   renderBarChart(elements.trends.highCalorieChart, model.weeklyHighCalorieTrend, {
-    height: 246,
-    barColor: "#f8e5c3",
-    accentColor: "#d6944a",
+    height: 220,
+    barColor: "#fde68a",
+    accentColor: "#f59e0b",
+    gridLines: 2,
+    showValues: false,
+    tooltipLabel: "高热量日",
+    tooltipFormatter: (value) => `${value} 天`,
   });
 
   renderBarChart(elements.trends.socialChart, model.weeklySocialTrend, {
-    height: 246,
-    barColor: "#efd3dc",
-    accentColor: "#8e5d77",
+    height: 220,
+    barColor: "#99f6e4",
+    accentColor: "#14b8a6",
+    gridLines: 2,
+    showValues: false,
+    tooltipLabel: "酒局次数",
+    tooltipFormatter: (value) => `${value} 次`,
   });
 
-  renderLineChart(elements.trends.boneMuscleChart, model.boneMuscleTrend, {
-    lineColor: "#7fa693",
-    dotColor: "#fef7f2",
+  renderAreaChart(elements.trends.boneMuscleChart, model.boneMuscleTrend, {
+    height: 248,
+    lineColor: "#22c55e",
+    lineWidth: 2.8,
+    dotColor: "#22c55e",
+    smooth: true,
+    fillFrom: "rgba(34, 197, 94, 0.18)",
+    fillTo: "rgba(34, 197, 94, 0.02)",
+    gridLines: 2,
+    tooltipLabel: "骨骼肌",
+    tooltipFormatter: (value) => `${value.toFixed(1)}kg`,
     yFormatter: (value) => `${value.toFixed(1)}kg`,
   });
 }
@@ -412,8 +460,8 @@ function renderReview(model) {
 
   renderBarChart(elements.review.compareChart, model.comparisonChart, {
     height: 248,
-    barColor: "#f3d5c2",
-    accentColor: "#87546d",
+    barColor: "#dbeafe",
+    accentColor: "#0284c7",
     valueClassName: "chart-value-soft",
     labelClassName: "chart-label-soft",
   });
@@ -425,11 +473,11 @@ function renderRecordLists(records) {
 
   elements.meal.list.innerHTML = records.meals.length
     ? records.meals.map((entry) => renderMealCard(entry)).join("")
-    : renderEmptyList("还没有饮食记录，从今天的一顿饭开始就行。");
+    : renderEmptyList("饮食记录会出现在这里", "从今天的一顿饭开始，先留下一条也很好。");
 
   elements.training.list.innerHTML = records.trainings.length
     ? records.trainings.map((entry) => renderTrainingCard(entry)).join("")
-    : renderEmptyList("还没有训练记录，随便记一场也没关系。");
+    : renderEmptyList("训练记录会出现在这里", "随便记一场也没关系，趋势会慢慢长出来。");
 }
 
 function renderSelectionHeader(key, group, count) {
@@ -509,8 +557,17 @@ function renderTrainingCard(entry) {
   `;
 }
 
-function renderEmptyList(text) {
-  return `<div class="record-card"><p class="record-meta">${escapeHtml(text)}</p></div>`;
+function renderEmptyList(title, copy) {
+  return `
+    <div class="record-card empty-card">
+      ${renderEmptyStateMarkup({
+        title,
+        copy,
+        compact: true,
+        branded: true,
+      })}
+    </div>
+  `;
 }
 
 async function handleMealSubmit(event) {
@@ -830,6 +887,7 @@ function resetBodyForm() {
 
 function setActiveTab(tab) {
   state.ui.activeTab = tab;
+  setTopbarMenuOpen(false);
   updateTopbar();
 }
 
@@ -880,6 +938,7 @@ function setFormSubmitting(button, idleLabel) {
 }
 
 async function handleLogout() {
+  setTopbarMenuOpen(false);
   await logout();
   window.location.href = "/auth/user-login?switch=1";
 }
@@ -920,6 +979,7 @@ function createSelectionState() {
 }
 
 function openProfileSheet() {
+  setTopbarMenuOpen(false);
   state.ui.profileOpen = true;
   hydrateProfileForm();
   elements.profile.overlay.hidden = false;
@@ -981,9 +1041,46 @@ async function handleProfileSubmit(event) {
 }
 
 function handleGlobalKeydown(event) {
+  if (event.key === "Escape" && state.ui.topbarMenuOpen) {
+    setTopbarMenuOpen(false);
+    return;
+  }
+
   if (event.key === "Escape" && state.ui.profileOpen) {
     closeProfileSheet();
   }
+}
+
+function toggleTopbarMenu(event) {
+  event.stopPropagation();
+  setTopbarMenuOpen(!state.ui.topbarMenuOpen);
+}
+
+function setTopbarMenuOpen(open) {
+  state.ui.topbarMenuOpen = Boolean(open);
+  elements.topbarMenu.button.setAttribute("aria-expanded", String(state.ui.topbarMenuOpen));
+  elements.topbarMenu.panel.hidden = !state.ui.topbarMenuOpen;
+  elements.topbarMenu.shell.classList.toggle("open", state.ui.topbarMenuOpen);
+}
+
+function handleTopbarMenuAction(event) {
+  if (event.target.closest("a, button")) {
+    setTopbarMenuOpen(false);
+  }
+}
+
+function handleDocumentClick(event) {
+  if (!state.ui.topbarMenuOpen) return;
+  if (elements.topbarMenu.shell.contains(event.target)) return;
+  setTopbarMenuOpen(false);
+}
+
+function greetingForNow(date = new Date()) {
+  const hour = date.getHours();
+  if (hour < 11) return "早上好";
+  if (hour < 14) return "中午好";
+  if (hour < 18) return "下午好";
+  return "晚上好";
 }
 
 function normalizeEditableEmail(email = "") {

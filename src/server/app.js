@@ -43,7 +43,7 @@ export async function startServer() {
     try {
       const apkPath = await resolveApkPath();
       if (!apkPath) {
-        response.status(404).send("暂时还没有可下载的 APK");
+        response.redirect(302, "/install?source=web");
         return;
       }
 

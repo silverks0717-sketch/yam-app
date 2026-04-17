@@ -177,8 +177,9 @@ function buildBiweeklyReview(data) {
 function buildStatusCard(label, count, hint) {
   return {
     label,
-    value: count ? "已记录" : "还没记",
-    detail: count ? `${count} 条` : hint,
+    value: String(count),
+    unit: "条",
+    detail: count ? "今天已记录" : hint,
     tone: count ? "ready" : "idle",
   };
 }

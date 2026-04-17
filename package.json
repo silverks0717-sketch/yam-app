@@ -1,6 +1,6 @@
 {
   "name": "yam-app",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "YAM",
   "private": true,
   "type": "module",
@@ -17,7 +17,10 @@
     "android:copy": "npx cap copy android",
     "android:sync": "npx cap sync android",
     "android:open": "npx cap open android",
-    "android:build": "export JAVA_HOME=\"/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home\"; export ANDROID_SDK_ROOT=\"/opt/homebrew/share/android-commandlinetools\"; export ANDROID_HOME=\"$ANDROID_SDK_ROOT\"; export PATH=\"/opt/homebrew/opt/openjdk@21/bin:$ANDROID_SDK_ROOT/platform-tools:$PATH\"; cd android && ./gradlew assembleDebug"
+    "android:build": "export JAVA_HOME=\"/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home\"; export ANDROID_SDK_ROOT=\"/opt/homebrew/share/android-commandlinetools\"; export ANDROID_HOME=\"$ANDROID_SDK_ROOT\"; export PATH=\"/opt/homebrew/opt/openjdk@21/bin:$ANDROID_SDK_ROOT/platform-tools:$PATH\"; cd android && ./gradlew assembleDebug",
+    "android:apk:release": "npm run android:sync && export JAVA_HOME=\"/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home\"; export ANDROID_SDK_ROOT=\"/opt/homebrew/share/android-commandlinetools\"; export ANDROID_HOME=\"$ANDROID_SDK_ROOT\"; export PATH=\"/opt/homebrew/opt/openjdk@21/bin:$ANDROID_SDK_ROOT/platform-tools:$PATH\"; cd android && ./gradlew assembleRelease && cd .. && node scripts/collect-android-artifacts.mjs",
+    "android:bundle:release": "npm run android:sync && export JAVA_HOME=\"/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home\"; export ANDROID_SDK_ROOT=\"/opt/homebrew/share/android-commandlinetools\"; export ANDROID_HOME=\"$ANDROID_SDK_ROOT\"; export PATH=\"/opt/homebrew/opt/openjdk@21/bin:$ANDROID_SDK_ROOT/platform-tools:$PATH\"; cd android && ./gradlew bundleRelease && cd .. && node scripts/collect-android-artifacts.mjs",
+    "android:store:build": "npm run android:sync && export JAVA_HOME=\"/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home\"; export ANDROID_SDK_ROOT=\"/opt/homebrew/share/android-commandlinetools\"; export ANDROID_HOME=\"$ANDROID_SDK_ROOT\"; export PATH=\"/opt/homebrew/opt/openjdk@21/bin:$ANDROID_SDK_ROOT/platform-tools:$PATH\"; cd android && ./gradlew assembleRelease bundleRelease && cd .. && node scripts/collect-android-artifacts.mjs"
   },
   "dependencies": {
     "@capacitor/android": "^8.3.0",

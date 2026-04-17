@@ -23,7 +23,7 @@ export const env = {
   accessTokenTtlMinutes: Number(process.env.ACCESS_TOKEN_TTL_MINUTES || 45),
   refreshTokenTtlDays: Number(process.env.REFRESH_TOKEN_TTL_DAYS || 7),
   publicAppOrigin: withFallback("PUBLIC_APP_ORIGIN", `http://localhost:${Number(process.env.PORT || 4321)}`),
-  publicDownloadPath: withFallback("PUBLIC_DOWNLOAD_PATH", "/downloads/latest.apk"),
+  publicDownloadPath: withFallback("PUBLIC_DOWNLOAD_PATH", "/install"),
   adminUsername: withFallback("ADMIN_USERNAME", "admin"),
   adminEmail: withFallback("ADMIN_EMAIL", "admin@yam.local"),
   adminPassword: withFallback("ADMIN_PASSWORD", "Admin123456!"),

@@ -1,6 +1,7 @@
 import { buildAppModel, escapeHtml, formatDateTime } from "./analytics.js";
 import { avatarForGender, labelForGender } from "./avatar-utils.js";
 import { renderAreaChart, renderBarChart, renderLineChart } from "./charts.js";
+import { renderEmptyStateMarkup } from "./empty-state.js";
 import { APP_VERSION } from "./generated-version.js";
 import { apiFetch, getCurrentUser, logout, requireUserSession } from "./api-client.js";
 import { initPwa } from "./pwa.js";
@@ -187,8 +188,8 @@ function renderDashboard() {
     .join("");
 
   renderBarChart(elements.trendChart, state.dashboard.weeklyTrend, {
-    barColor: "#f4d6bd",
-    accentColor: "#8d5872",
+    barColor: "#bae6fd",
+    accentColor: "#0ea5e9",
   });
 
   elements.recentUsers.innerHTML = renderMiniUsers(
@@ -275,31 +276,31 @@ function renderUserDetail() {
       label: entry.label,
       value: (entry.meals || 0) + (entry.trainings || 0) + (entry.bodyMetrics || 0),
     })),
-    { barColor: "#f0d4c3", accentColor: "#8e5a73" }
+    { barColor: "#dbeafe", accentColor: "#0284c7" }
   );
 
   renderAreaChart(elements.detailWeightChart, model.trends.weightTrend, {
-    lineColor: "#d08b63",
-    dotColor: "#fef7f2",
-    fillColor: "rgba(250, 221, 198, 0.62)",
+    lineColor: "#0ea5e9",
+    dotColor: "#ffffff",
+    fillColor: "rgba(14, 165, 233, 0.16)",
     yFormatter: (value) => `${value.toFixed(1)}kg`,
   });
   renderLineChart(elements.detailWaistChart, model.trends.waistTrend, {
-    lineColor: "#9d5f78",
-    dotColor: "#fef7f2",
+    lineColor: "#14b8a6",
+    dotColor: "#ffffff",
     yFormatter: (value) => `${value.toFixed(1)}cm`,
   });
   renderBarChart(elements.detailTrainingChart, model.trends.weeklyTrainingTrend, {
-    barColor: "#f1d2c2",
-    accentColor: "#85536d",
+    barColor: "#bae6fd",
+    accentColor: "#0ea5e9",
   });
   renderBarChart(elements.detailHighCalorieChart, model.trends.weeklyHighCalorieTrend, {
-    barColor: "#f8e4be",
-    accentColor: "#cf9248",
+    barColor: "#fde68a",
+    accentColor: "#f59e0b",
   });
   renderBarChart(elements.detailSocialChart, model.trends.weeklySocialTrend, {
-    barColor: "#eed0db",
-    accentColor: "#89556f",
+    barColor: "#99f6e4",
+    accentColor: "#14b8a6",
   });
 
   elements.detailReviewSummary.textContent = model.review.summary;
@@ -442,7 +443,16 @@ function byId(id) {
 
 function renderMiniUsers(users = [], emptyLabel, formatter) {
   if (!users.length) {
-    return `<div class="record-card"><p class="record-meta">${escapeHtml(emptyLabel)}</p></div>`;
+    return `
+      <div class="record-card empty-card">
+        ${renderEmptyStateMarkup({
+          title: "这里还没有用户动态",
+          copy: emptyLabel,
+          compact: true,
+          branded: true,
+        })}
+      </div>
+    `;
   }
 
   return users
@@ -462,7 +472,16 @@ function renderMiniUsers(users = [], emptyLabel, formatter) {
 
 function renderDatasetMiniList(items = [], mapItem, emptyLabel) {
   if (!items.length) {
-    return `<div class="record-card"><p class="record-meta">${escapeHtml(emptyLabel)}</p></div>`;
+    return `
+      <div class="record-card empty-card">
+        ${renderEmptyStateMarkup({
+          title: "这里还没有记录明细",
+          copy: emptyLabel,
+          compact: true,
+          branded: true,
+        })}
+      </div>
+    `;
   }
 
   return items

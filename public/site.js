@@ -46,14 +46,14 @@ async function hydrateReleaseInfo() {
     hydrateDeviceLinks(payload, links);
   } catch {
     versionNode.textContent = "可注册 · 可安装 · 可同步";
-    hydrateDeviceLinks({ downloadUrl: "/downloads/latest.apk" }, links);
+    hydrateDeviceLinks({ downloadUrl: "/install" }, links);
   }
 }
 
 function hydrateDeviceLinks(payload, links) {
   const publicOrigin = payload.publicOrigin || window.location.origin;
   const authUrl = new URL("/auth/user-login", publicOrigin).toString();
-  const downloadUrl = new URL(payload.downloadUrl || "/downloads/latest.apk", publicOrigin).toString();
+  const downloadUrl = new URL(payload.downloadUrl || "/install", publicOrigin).toString();
 
   if (links.iphoneText) links.iphoneText.textContent = authUrl;
   if (links.ipadText) links.ipadText.textContent = authUrl;

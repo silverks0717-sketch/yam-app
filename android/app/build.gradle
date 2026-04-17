@@ -1,5 +1,33 @@
 apply plugin: 'com.android.application'
 
+import groovy.json.JsonSlurper
+import java.util.Properties
+
+def packageJson = new JsonSlurper().parseText(file('../../package.json').text)
+def versionNameValue = (System.getenv("YAM_ANDROID_VERSION_NAME") ?: packageJson.version ?: "1.0.0").toString()
+def versionTokens = versionNameValue.tokenize('.').collect { token ->
+    try {
+        return token.toInteger()
+    } catch (Exception ignored) {
+        return 0
+    }
+}
+while (versionTokens.size() < 3) {
+    versionTokens << 0
+}
+def derivedVersionCode = (versionTokens[0] * 10000) + (versionTokens[1] * 100) + versionTokens[2]
+def versionCodeValue = (System.getenv("YAM_ANDROID_VERSION_CODE") ?: derivedVersionCode.toString()).toInteger()
+
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('keystore.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+def hasReleaseSigning = keystoreProperties["storeFile"] &&
+    keystoreProperties["storePassword"] &&
+    keystoreProperties["keyAlias"] &&
+    keystoreProperties["keyPassword"]
+
 android {
     namespace = "com.yam.app"
     compileSdk = rootProject.ext.compileSdkVersion
@@ -7,8 +35,8 @@ android {
         applicationId "com.yam.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode versionCodeValue
+        versionName versionNameValue
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -16,10 +44,35 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    signingConfigs {
+        release {
+            if (hasReleaseSigning) {
+                storeFile file(keystoreProperties["storeFile"])
+                storePassword keystoreProperties["storePassword"]
+                keyAlias keystoreProperties["keyAlias"]
+                keyPassword keystoreProperties["keyPassword"]
+            }
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
+            if (hasReleaseSigning) {
+                signingConfig signingConfigs.release
+            }
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    bundle {
+        language {
+            enableSplit = false
+        }
+    }
+    applicationVariants.configureEach { variant ->
+        variant.outputs.configureEach { output ->
+            if (output.outputFileName?.endsWith(".apk")) {
+                output.outputFileName = "yam-${versionNameValue}-${variant.buildType.name}.apk"
+            }
         }
     }
 }
@@ -51,4 +104,8 @@ try {
     }
 } catch(Exception e) {
     logger.info("google-services.json not found, google-services plugin not applied. Push Notifications won't work")
+}
+
+if (!hasReleaseSigning) {
+    logger.lifecycle("Release signing is not configured yet. Copy android/keystore.properties.example to android/keystore.properties before generating store builds.")
 }

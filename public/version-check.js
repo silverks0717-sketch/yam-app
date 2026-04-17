@@ -17,7 +17,7 @@ export async function enforceVersionGate({ currentVersion }) {
       currentVersion,
       latestVersion,
       forceUpdate: Boolean(payload.forceUpdate),
-      downloadUrl: payload.downloadUrl || "/downloads/latest.apk",
+      downloadUrl: payload.downloadUrl || "/install",
       webUrl: payload.webUrl || "/auth/user-login",
       changelog: Array.isArray(payload.changelog) ? payload.changelog : [],
     });

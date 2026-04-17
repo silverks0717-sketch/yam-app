@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>YAM · 官网与下载</title>
+    <title>YAM · Android 入口</title>
     <link rel="stylesheet" href="/styles.css" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="icon" type="image/png" sizes="192x192" href="/assets/icon/yam-icon-192.png" />
@@ -19,36 +19,36 @@
           <img class="brand-icon" src="/assets/icon/yam-icon-192.png" alt="YAM 图标" />
           <div>
             <strong>YAM</strong>
-            <span>官网与下载</span>
+            <span>Android 入口</span>
           </div>
         </a>
 
         <div class="hero-layout" style="margin-top:24px;">
           <div class="hero-copy-block">
 	            <p class="kicker">官网 · Android · PWA</p>
-	            <h1 class="marketing-title" style="font-size:clamp(2.4rem, 4vw, 3.6rem);">打开官网，就能直接开始用。</h1>
+	            <h1 class="marketing-title" style="font-size:clamp(2.4rem, 4vw, 3.6rem);">Android 先走稳定入口，商店版再往上接。</h1>
             <p class="marketing-copy">
-	              这里既是 YAM 的下载入口，也是发给朋友就能直接打开的官网。安卓可以下载 APK，iPhone / iPad 可以直接用 Web 或添加到主屏幕。
+	              这是 YAM 的安卓统一入口。正式云端已经上线；Google Play 和华为商店包会继续沿用这套账号体系。当前如果你只是要马上使用，直接进入 Web 版就可以和电脑互通。
             </p>
 	            <div class="marketing-actions">
-	              <a class="button primary" href="/downloads/latest.apk">下载 Android APK</a>
-	              <a class="button subtle" href="/auth/user-login">进入 Web 版</a>
+	              <a class="button primary" href="/auth/user-login">进入正式 Web 版</a>
+	              <a class="button subtle" href="/auth/user-register">创建云端账号</a>
 	              <a class="button ghost" href="/privacy">隐私说明</a>
 	            </div>
           </div>
 
           <div class="hero-preview-card">
             <div class="preview-header">
-              <span class="preview-pill">固定下载地址</span>
-              <span class="preview-note">/downloads/latest.apk</span>
+              <span class="preview-pill">正式入口</span>
+              <span class="preview-note">/install</span>
             </div>
             <div class="preview-summary" style="margin-top:18px;">
-              <strong>安装步骤</strong>
-              <p>1. 下载 APK。2. 在手机里点开。3. 第一次安装时允许此来源安装。4. 确认安装。5. 打开使用。</p>
+              <strong>现在怎么用</strong>
+              <p>1. 电脑和手机都打开正式站。2. 用同一套云端账号登录。3. 所有记录直接同步，不再受本机 localhost 影响。</p>
             </div>
             <div class="preview-summary" style="margin-top:12px;">
-	              <strong>更新方式</strong>
-	              <p>每次打开 App 或 Web 版都会做版本检查；安卓会跳到最新 APK，iPhone / iPad 会直接进入最新 Web / PWA。</p>
+	              <strong>后续上架</strong>
+	              <p>仓库已经补齐 Android 正式 APK / AAB 提包脚本。等商店资料准备好后，可以直接生成 Google Play 和华为 AppGallery 需要的发布产物。</p>
             </div>
           </div>
         </div>
@@ -57,13 +57,13 @@
       <section class="marketing-grid" style="margin-top:18px;">
         <article class="card marketing-card">
           <p class="kicker">Android</p>
-          <h2>适合华为 / 安卓手机</h2>
-          <p class="muted-text">第一阶段优先照顾安卓下载安装路径，不走 App Store 审核流程。</p>
+          <h2>商店版继续准备中</h2>
+          <p class="muted-text">仓库已支持正式 APK / AAB 产物，后续可分别提交到 Google Play 和华为 AppGallery。</p>
         </article>
         <article class="card marketing-card">
           <p class="kicker">Web 版</p>
-          <h2>不用安装也能直接使用</h2>
-          <p class="muted-text">打开网页就能注册、登录、记录和看图表，适合先试用或临时从电脑继续记录。</p>
+          <h2>现在就能直接使用</h2>
+          <p class="muted-text">打开网页就能注册、登录、记录和看图表。对你现在最重要的是先统一到正式云端账号库。</p>
         </article>
         <article class="card marketing-card">
           <p class="kicker">iPhone / iPad</p>
@@ -71,9 +71,9 @@
           <p class="muted-text">不走 App Store。用 Safari 打开首页，点“添加到主屏幕”，就能像 App 一样使用 Web 版。</p>
         </article>
         <article class="card marketing-card">
-          <p class="kicker">更新方式</p>
-          <h2>稳定下载链接</h2>
-          <p class="muted-text">以后更新 APK，只要替换同一路径的文件，用户记住的地址就不用改。</p>
+          <p class="kicker">账号互通</p>
+          <h2>不要再用 localhost 注册</h2>
+          <p class="muted-text">本机 localhost 注册的账号只存在本地数据库。以后请统一用正式云端地址注册，这样手机和电脑才能共用同一账号。</p>
         </article>
       </section>
     </main>

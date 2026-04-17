@@ -34,7 +34,7 @@ const payload = {
   productName: "YAM",
   latestVersion: packageJson.version,
   forceUpdate: Boolean(releaseConfig.forceUpdate),
-  downloadUrl: "/downloads/latest.apk",
+  downloadUrl: "/install",
   webUrl: "/auth/user-login",
   privacyUrl: "/privacy",
   updatedAt,
